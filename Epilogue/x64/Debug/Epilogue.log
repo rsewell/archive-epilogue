@@ -1,0 +1,7 @@
+﻿  DarwinAbstractor.cpp
+  Epilogue.cpp
+  LinuxAbstractor.cpp
+  OSAbstractor.cpp
+  Win32Abstractor.cpp
+  Generating Code...
+C:\Projects\Epilogue\Epilogue\Win32Abstractor.cpp(29,3): error C3861:  'error': identifier not found
