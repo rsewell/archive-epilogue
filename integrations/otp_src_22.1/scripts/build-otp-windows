@@ -1,0 +1,41 @@
+#!/bin/sh
+# -*- sh -*-
+set -e
+
+if [ "$1" == "x86" ]; then
+    echo "Win32"
+    . ~/setup32_env.sh
+else
+    echo "Win64"
+    . ~/setup64_env.sh
+fi
+export
+
+if [ -d lib/gs ]; then
+    tar xvzf ~/tcltk85_win32_bin.tar.gz
+fi
+export ERL_TOP=`pwd`
+if [ "$1" == "x86" ]; then
+    eval `./otp_build env_win32`
+else
+    eval `./otp_build env_win32 x64`
+fi
+
+## We disable as many apps as we can to make the build faster.
+## The criteria we use is if the application compiles native code or not.
+WITHOUT_APPS="common_test debugger dialyzer diameter edoc eldap erl_docgen et eunit ftp hipe inets mnesia observer public_key reltool ssh ssl syntax_tools tftp xmerl"
+WITHOUT=""
+if [ ! -d lib/otp_mibs ]; then
+    WITHOUT_APPS="$WITHOUT_APPS otp_mibs snmp"
+fi
+for app in $WITHOUT_APPS; do
+    WITHOUT="$WITHOUT --without-$app"
+done
+
+./otp_build autoconf
+./otp_build configure --enable-plain-emulator $WITHOUT
+./otp_build boot -a
+./otp_build release -a
+# ./otp_build debuginfo_win32
+# ./otp_build tests
+./otp_build installer_win32

@@ -1,0 +1,30 @@
+#/bin/bash
+
+#
+#  docker swarm setup is:
+#    - apollo jenkins_master
+#    - artemis,apollo jenkins_slave
+#
+
+if [ `whoami` != "otptest" ]; then
+   echo "Must run as otptest user"
+   exit 1;
+fi
+
+docker build --network host -t sekidocker.rnd.ki.sw.ericsson.se/proj-erlang/jenkins -f scripts/Dockerfile.jenkins --pull \
+       --build-arg https_proxy=${http_proxy} --build-arg http_proxy=${http_proxy} \
+       --build-arg HTTP_PROXY=${http_proxy} --build-arg HTTPS_PROXY=${http_proxy} \
+       --build-arg NO_PROXY=${no_proxy} --build-arg no_proxy=${no_proxy} scripts
+docker push sekidocker.rnd.ki.sw.ericsson.se/proj-erlang/jenkins
+
+docker build --network host -t sekidocker.rnd.ki.sw.ericsson.se/proj-erlang/jenkins-swarm-agent -f scripts/Dockerfile.jenkins-swarm-agent --pull \
+       --build-arg https_proxy=${http_proxy} --build-arg http_proxy=${http_proxy} \
+       --build-arg HTTP_PROXY=${http_proxy} --build-arg HTTPS_PROXY=${http_proxy} \
+       --build-arg NO_PROXY=${no_proxy} --build-arg no_proxy=${no_proxy} scripts
+docker push sekidocker.rnd.ki.sw.ericsson.se/proj-erlang/jenkins-swarm-agent
+
+docker stack rm jenkins
+docker stack rm swarmpit
+sleep 15 # Sleep to let the default stack networks be deleted
+docker stack deploy --with-registry-auth -c scripts/jenkins.yml jenkins
+docker stack deploy -c scripts/swarmpit.yml swarmpit

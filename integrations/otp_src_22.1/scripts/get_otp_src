@@ -1,0 +1,31 @@
+#!/bin/sh
+
+error () {
+    echo "ERROR: $1" 1>&2
+    exit 1
+}
+
+ext_dir=`dirname "$0"`
+
+case "$ext_dir" in
+    /*) ;;
+    .) ext_dir=`pwd` ;;
+    *) ext_dir=`pwd`/$ext_dir ;;
+esac
+
+base_image="$ext_dir/docker_build_info/base_image"
+docker_registry="$ext_dir/docker_build_info/registry"
+vol="$ext_dir:$ext_dir:rw"
+copy_otp_src="cd /daily_build && tar -cf - otp_src | ( cd $ext_dir && tar -xpf -)"
+local_setup="cd $ext_dir/otp_src/erts && ERL_TOP=$ext_dir/otp_src make local_setup"
+image=`cat $base_image` || error "Failed to read base image name from: $base_image"
+registry=`cat $docker_registry` || error "Failed to read docker registry name from: $docker_registry"
+
+case $registry in
+    */) ;;
+    *) registry="$registry/";;
+esac
+
+copy="docker run --rm --volume=\"$vol\" $registry$image /bin/sh -c \"$copy_otp_src && $local_setup\""
+echo $copy
+eval $copy

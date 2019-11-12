@@ -1,0 +1,83 @@
+#!/bin/sh
+
+md="/bin/mkdir"
+
+otp_src="/daily_build/otp_src"
+build_info="/daily_build/build_info"
+
+misc_files="OTP_VERSION otp_versions.table make/otp_version_tickets"
+
+error () {
+    echo "ERROR: $1" 1>&2
+    exit 1
+}
+
+[ $# -eq 3 ] || error "Invalid amount of arguments\n  Usage: create_log_dirs <Build Id> <Docker Registry> <type>"
+
+test_build_id=$1
+docker_registry=$2
+type=$3
+
+special=
+commercial_marker=c
+extra=
+case "$type" in
+    "opt") special="docs";;
+    "debug" | "lcnt")
+        special="special"
+        extra="${type}_"
+        commercial_marker=o
+        ;;
+    *)
+        special="${type}"
+        extra="${type}_"
+        commercial_marker=o
+        ;;
+esac
+
+rel=`cat $otp_src/OTP_VERSION | sed "s|^\([0-9]*\)\..*|\1|"` || error "Failed to read $otp_src/OTP_VERSION"
+timestamp=`cat $build_info/timestamp` || error "Failed to read $build_info/timestamp"
+branch=`cat $build_info/branch` || error "Failed to read $build_info/branch"
+build_id=`cat $build_info/build_id` || error "Failed to read $build_info/build_id"
+
+case "$branch" in
+    master-opu|opu)
+	build_type=$branch;;
+    maint-opu)
+	build_type=opu;;
+    greypatch-opu)
+	build_type=greypatch;;
+    *)
+        build_type=patch
+        ;;
+esac
+
+ext_dir="/ldisk/daily_build/${rel}_${build_type}_${commercial_marker}_${extra}docker_${test_build_id}.${timestamp}"
+
+$md $ext_dir || error "Failed to create $ext_dir"
+$md $ext_dir/logs || error "Failed to create $ext_dir/logs"
+
+docker_log=$ext_dir/logs/log01.docker
+docker_base_image="otp-$special-$branch:$build_id"
+echo "Docker base image: $docker_base_image" > $docker_log
+echo "Timestamp: $timestamp" >> $docker_log
+echo "\nEnvironment:" >> $docker_log
+env >> $docker_log
+
+$md $ext_dir/test || error "Failed to create $ext_dir/test"
+$md $ext_dir/docker_build_info || error "Failed to create $ext_dir/docker_build_info"
+$md $ext_dir/docker_build_info/misc_src || error "Failed to create $ext_dir/docker_build_info/misc_src"
+cp /daily_build/build_info/* $ext_dir/docker_build_info || error "Failed to copy docker build info"
+echo $docker_base_image > $ext_dir/docker_build_info/base_image || error "Failed to create $ext_dir/docker_build_info/base_image"
+echo $docker_registry > $ext_dir/docker_build_info/registry || error "Failed to create $ext_dir/docker_build_info/registry"
+
+cd $otp_src || error "Failed to cd into $otp_src"
+app_files=`find erts/preloaded/ebin lib/*/ebin -name '*.app'` || error "Failed to search for app-files"
+tar -cf - $app_files $misc_files | ( cd $ext_dir/docker_build_info/misc_src && tar -xpf -)
+[ $? -eq 0 ] || error "Failed to copy misc source files"
+
+cp -p $otp_src/scripts/get_otp_src $ext_dir || error "Failed to copy $otp_src/scripts/get_otp_src to $ext_dir"
+
+echo $ext_dir
+
+exit 0

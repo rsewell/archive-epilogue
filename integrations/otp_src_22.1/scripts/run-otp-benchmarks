@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -ex
+
+APP=$1
+BUILD_TYPE=$2
+BUILD_NUMBER=$3
+NETMARKS_REMOTE_HOST=pollux
+OTP_STRICT_INSTALL=yes
+ERL_TOP="/net/`hostname`$WORKSPACE"
+SHA=undefined
+MAKEFLAGS="-j5 -k"
+ERL_CONFIG="+sbt db"
+SHA=`cat release/otp/sha`
+export MAKEFLAGS ERL_CONFIG NETMARKS_REMOTE_HOST OTP_STRICT_INSTALL ERL_TOP SHA
+
+cd "/net/`hostname`$WORKSPACE"
+PATH="`pwd`/release/otp/bin/:$PATH"
+
+make_tests () {
+    cd $1/test
+    ! RELEASE_PATH=$ERL_TOP/release/tests make release_tests_spec
+    cd -
+}
+
+run_benchmark() {
+    PREVDIR=`pwd`
+    cd release/tests/test_server
+    if erl $ERL_CONFIG -noshell -eval "ts:bench($1,[batch])." -s init stop; then
+        RESULT_DIR=`cat $WORKSPACE/release/tests/test_server/latest_benchmark`
+        escript ~otptest/bin/jenkins_upload_benchmarks.es $BUILD_NUMBER $RESULT_DIR $BUILD_TYPE
+    fi
+    cd $PREVDIR
+}
+
+if [ $APP == edev ]; then
+    bash -u ~otptest/bin/jenkins_edev_bencher.sh $BUILD_TYPE
+elif [ $APP == emulator ]; then
+    make_tests erts/$APP
+    run_benchmark $APP
+else
+    make_tests lib/$APP
+    run_benchmark $APP
+fi

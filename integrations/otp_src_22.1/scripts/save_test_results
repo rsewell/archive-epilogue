@@ -1,0 +1,173 @@
+#!/usr/bin/perl -w
+use strict;
+use Cwd;
+use File::Find;
+use File::Basename;
+
+my $SSH_HOST = 'isildur';
+my $prefix = '/usr/local/otp/test';
+my $ssh_opts = "-o StrictHostKeyChecking=false -i $ENV{SSH_KEY_FILE}";
+my $ssh_user_host = "$ENV{SSH_USER}\@$SSH_HOST";
+
+@ARGV >= 1 or die "Missing argument";
+@ARGV == 1 or print "Ignoring additional arguments";
+
+my $timestamp_file = '/daily_build/build_info/timestamp';
+my $branch_file = '/daily_build/build_info/branch';
+
+save_test_results($ARGV[0] . "/test/test_server");
+save_gcov_results($ARGV[0] . "/gcov-html");
+
+sub save_test_results {
+    my($test_log_dir) = @_;
+
+    chdir $test_log_dir;
+    my $local_tar = "test_results.tar.gz";
+    my $cmd = "|tar zcTf - $local_tar";
+    print "tar cmd: $cmd\n";
+
+    #
+    # Print the names of all files to copy to the "tar" processes
+    # started above.
+    #
+    open(TAR, $cmd) or die "Failed to save test results: $!\n";
+    print TAR "variables\n" if -f "variables";
+    print TAR "index.html\n" if -f "index.html";
+    print TAR "motp_build_info\n" if -f "motp_build_info";
+    print TAR "all_runs.html\n" if -f "all_runs.html";
+    print TAR "ct_default.css\n" if -f "ct_default.css";
+    print TAR "jquery-latest.js\n" if -f "jquery-latest.js";
+    print TAR "jquery.tablesorter.min.js\n" if -f "jquery.tablesorter.min.js";
+
+    # Look for common_test log files.
+    my @flogs = <ct_run*/{*.logs,*.html,*.css,*.js}>;
+    find sub {
+	$File::Find::prune = 1, return if $_ eq 'log_private';
+	return if $_ eq 'last_link.html';
+	print TAR "$File::Find::name\n"
+            if m/(\.html|\.log|\.summary|\.css|\.js)$/;
+    }, @flogs if @flogs;
+
+    my @crash_dumps = <*_erl_crash.dump>;
+    if (@crash_dumps) {
+        print "Found these crash dumps: ", @crash_dumps, "\n";
+        foreach my $crashfile (@crash_dumps) {
+            chmod 0444, $crashfile;
+            print TAR "$crashfile\n";
+        }
+    }
+    close TAR or die "Failed to save test results: $!\n";
+    print "Saved tests resuls in $local_tar\n";
+
+    # Dig out some configuration details.
+    my ($rel,$platform_name) = get_some_variables();
+    print "rel: $rel\n";
+    print "platform_name: $platform_name\n";
+
+    my $timestamp = get_timestamp();
+
+    # Publish test results.
+    my $kind = get_test_kind();
+    my $kind_rel = "${kind}_$rel";
+    my $platform_filename = "${platform_name}_$rel";
+    my $dest_dir = "$prefix/$kind_rel/$timestamp/$platform_filename";
+    print "dest_dir: $dest_dir\n";
+    copy_expand_tar($local_tar, $dest_dir);
+    my $make_index = "/home/otptest/bin/otp_make_index";
+    ssh("$make_index $prefix");
+}
+
+sub save_gcov_results {
+    my($gcov_dir) = @_;
+
+    if (-d $gcov_dir) {
+	my $local_tar = "$gcov_dir/../gcov_results.tgz";
+	run("tar zcfC $local_tar $gcov_dir .");
+	my $timestamp = get_timestamp();
+	my $branch = get_branch();
+	my $dest_dir = "$prefix/gcov_html.$branch/$timestamp";
+	copy_expand_tar($local_tar, $dest_dir);
+    }
+}
+
+sub copy_expand_tar {
+    my($tar_file, $dest_dir) = @_;
+
+    ssh("mkdir -p $dest_dir");
+    run("scp $ssh_opts $tar_file $ssh_user_host:$dest_dir");
+    my $remote_tar = "$dest_dir/" . basename($tar_file);
+    ssh("tar zxCf $dest_dir $remote_tar");
+    ssh("rm $remote_tar");
+}
+
+sub get_timestamp {
+    local $/;
+    open TIMESTAMP, "<", $timestamp_file
+	or fatal("Failed to open $timestamp_file for reading: $!");
+    my $tstamp = <TIMESTAMP>;
+    close TIMESTAMP;
+    $tstamp =~ /^(\d+)-(\d+)-(\d+)_\d+/
+	or die fatal("Unexpected content in $timestamp_file");
+    return "$1_$2_$3";
+}
+
+sub get_branch {
+    local $/;
+    open BRANCH_FILE, "<", $branch_file
+	or fatal("Failed to open $branch_file for reading: $!");
+    my $branch = <BRANCH_FILE>;
+    close BRANCH_FILE;
+    return trim($branch);
+}
+
+sub get_test_kind {
+    if (get_branch() =~ /^maint-\d\d-opu$/) {
+	return "patches";
+    }
+    else {
+	return "progress";
+    }
+}
+
+sub ssh {
+    my($cmd) = @_;
+ 
+    run("ssh $ssh_opts $ssh_user_host $cmd");
+}
+
+sub run {
+    my($cmd) = @_;
+    print "++ $cmd\n";
+    system($cmd) == 0 or "Failed: $?\n";
+}
+
+sub get_some_variables {
+    my $rel = 'unknown_release';
+    my $platform = 'unknown_platform';
+    my $filename = "variables";
+    unless (open(VARS, $filename)) {
+        die "Failed to open $filename for reading: $!\n";
+    } else {
+        while (<VARS>) {
+            if (m/^\{erl_release,\"([^\"]*)\"/) {
+                $rel = $1;
+            } elsif (m/^\{platform_filename,\"([^\"]*)\"/) {
+                $platform = $1;
+            }
+        }
+        close VARS;
+    }
+    ($rel,$platform);
+}
+
+sub timestamp {
+    my($day,$mon,$year) = (localtime(time))[3,4,5];
+    sprintf "%04d_%02d_%02d", $year+1900, $mon+1, $day;
+}
+
+# Trim leading and traling whitespace
+sub trim {
+    my $s = shift;
+    $s =~ s/^\s+|\s+$//g;
+    return $s;
+}

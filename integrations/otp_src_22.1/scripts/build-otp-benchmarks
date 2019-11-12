@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -ex
+
+OTP_STRICT_INSTALL=yes
+ERL_TOP="/net/`hostname`$WORKSPACE"
+MAKEFLAGS="-j5 -k"
+ERL_CONFIG="+sbt db"
+export MAKEFLAGS ERL_TOP OTP_STRICT_INSTALL
+
+(mkdir -p release/otp && cd release/otp && tar xzf $WORKSPACE/otp.tar.gz)
+
+cd "/net/`hostname``pwd`"
+(cd release/otp && ./Install -minimal `pwd`)
+PATH="`pwd`/release/otp/bin/:$PATH"
+
+./otp_build autoconf
+./configure
+
+make_tests () {
+    cd $1
+    ! RELEASE_PATH=$ERL_TOP/release/tests make release_tests_spec
+    cd -
+}
+
+if [ -d lib/common_test/test_server ]; then
+  make_tests lib/common_test/test_server
+else
+  make_tests lib/test_server/src
+fi
+
+(cd release/tests/test_server && erl $ERL_CONFIG -noshell -eval "ts:install()." -s init stop)

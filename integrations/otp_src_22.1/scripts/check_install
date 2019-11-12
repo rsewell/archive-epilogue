@@ -1,0 +1,52 @@
+#!/bin/sh
+#
+# Check that install/release isn't totally broken
+#
+# This script should be called by another user (except for root)
+# than the user that build OTP. This user should not have write
+# access in the source tree.
+# 
+
+[ $# -eq 4 ] || error "Invalid amount of arguments\n  Usage: check_install <Branch> <ErlTop> <InstDir> <FastBuild>"
+
+branch="$1"
+erl_top="$2"
+rel_root="$3"
+fast_build="$4"
+
+error () {
+    echo "ERROR: $1" 1>&2
+    exit 1
+}
+
+cd "$erl_top" || error "Failed to change directory to $erl_top"
+
+#
+# Ignore broken install for grey-patches prior to OTP 22
+# since this is a too big hassle to fix on a random
+# base version...
+#
+# As of OTP 22 all versions should be correct!
+#
+if [ "$branch" = "greypatch-opu" ]; then
+    otp_rel=`cat OTP_VERSION | sed "s|^\([0-9]*\)\..*$|\1|g"` || error "Failed to read OTP_VERSION"
+    if [ $otp_rel -lt 22 ]; then
+	exit 0
+    fi
+fi
+
+# Will fail if 'make release' tries to modify the source tree
+echo "make release RELEASE_ROOT=$rel_root"
+make release RELEASE_ROOT="$rel_root" || error "make release failed"
+
+if [ "$fast_build" = "false" ]; then
+    # Will fail if 'make release_docs' tries to modify the source tree
+    echo "make release_docs RELEASE_ROOT=$rel_root"
+    make release_docs RELEASE_ROOT="$rel_root"  || error "make release_docs failed"
+fi
+
+# Will fail content have been copied out instead of installed
+echo "rm -rf $rel_root"
+rm -rf "$rel_root" || error "Failed to remove installation"
+
+exit 0

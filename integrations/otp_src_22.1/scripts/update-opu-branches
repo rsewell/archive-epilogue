@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+set -v
+
+from_repo=${1:-"git@git-server:otptest.git"}
+to_repo=${2:-"git@git-server:jenkinstest.git"}
+branches="opu master-opu"
+otp=otp_src_dir
+
+update() {
+    echo "Updating $1"
+    git checkout origin/$1
+    ! git branch -D $1
+    git checkout -b $1
+    pushd ..
+    cp -nrp $(ls -1 | grep -v $otp) $otp/
+    popd
+    git add -A
+    git commit -m "Add jenkins scripts"
+    git push to +$1
+}
+
+if [ -d $otp ]; then
+    cd $otp
+    git remote prune origin
+    git fetch -v origin
+else
+    git clone -v $from_repo $otp
+    cd $otp
+    git remote add to $to_repo
+fi
+
+for branch in $branches;
+do
+    update $branch
+done

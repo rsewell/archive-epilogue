@@ -1,0 +1,33 @@
+#!/bin/sh
+
+error () {
+    echo "ERROR: $1" 1>&2
+    exit 1
+}
+
+[ $# -eq 1 ] || error "Invalid amount of arguments\n  Usage: get_otp_branch_mode <ERL_TOP>"
+
+vsn_tickets_file="$1/make/otp_version_tickets"
+
+vsn_tickets=`cat "$vsn_tickets_file"` || error "Failed to read: $vsn_tickets_file"
+
+found_non_tickets=false
+found_tickets=false
+
+for ticket in $vsn_tickets; do
+    case $ticket in
+	OTP-[1-9][0-9]*)
+	    found_tickets=true;;
+	*)
+	    found_non_tickets=true;;
+    esac
+done
+
+case $found_tickets-$found_non_tickets in
+    true-false)
+	echo "release";;
+    *)
+	echo "test";;
+esac
+
+exit 0;

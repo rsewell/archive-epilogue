@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -x
+
+testdir=$1
+
+echo -n "$testdir "
+cd $testdir
+for first in $(ls *_data/Makefile.first 2> /dev/null )
+do
+    (cd $(dirname $first) &&
+         if ! make -f Makefile.first 2>&1 > compile.log
+         then
+             cat compile.log
+             exit 1
+         fi
+    )
+done
+if [ -f Emakefile ]
+then
+    if erl -noshell -eval 'case make:all() of error -> erlang:halt(1); _ -> init:stop() end.' 2>&1 >> compile.log
+    then
+        echo " ok"
+    else
+        cat compile.log
+        exit 1
+    fi
+elif erlc -I . *_SUITE.erl 2>&1 >> compile.log
+then
+    echo " ok"
+else
+    cat compile.log
+    exit 1
+fi

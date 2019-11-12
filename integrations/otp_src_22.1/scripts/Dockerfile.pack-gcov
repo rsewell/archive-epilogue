@@ -1,0 +1,8 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+USER root
+
+RUN apt-get install --fix-missing -y lcov
+
+USER otptest

@@ -1,0 +1,56 @@
+ARG BASE=ubuntu:16.04
+FROM $BASE
+
+RUN apt-get update && apt-get --fix-missing -y install build-essential m4 \
+        libncurses5-dev libssh-dev unixodbc-dev libgmp3-dev xsltproc \
+        default-jdk autoconf libxml2-utils tzdata ssh openssh-server groff-base \
+        sudo gdb apache2 bind9 libsctp-dev lksctp-tools
+
+ARG FAST_BUILD=false
+
+## Removing these install considerably decreases build time
+RUN ${FAST_BUILD} || (apt-get --fix-missing -y install fop libwxbase3.0-dev libwxgtk3.0-dev)
+
+ARG gid=10
+
+RUN echo "Europe/Stockholm" >/etc/timezone && \
+        ln -snf /usr/share/zoneinfo/$(cat /etc/timezone) /etc/localtime && \
+        useradd -rm -d /home/otptest -s /bin/sh -g ${gid} -G ${gid},sudo -u 421 otptest && \
+        echo "otptest ALL=(ALL:ALL) NOPASSWD: ALL" > /etc/sudoers.d/otptest && \
+        useradd -rm -d /home/otp -s /bin/sh -g ${gid} -G ${gid},sudo -u 419 otp && \
+        mkdir -p /daily_build/build_info && chmod -R 777 /daily_build/ && \
+        echo "/ldisk/daily_build/** r," >> /etc/apparmor.d/local/usr.sbin.named
+
+
+WORKDIR /daily_build
+
+ARG BUILD_ID
+ARG BRANCH
+ARG TIMESTAMP
+ARG SHA
+
+USER otptest
+
+ARG MAKEFLAGS=-j6
+
+ENV install_dir=/daily_build/otp \
+        ERL_TOP=/daily_build/otp_src \
+        OTP_STRICT_INSTALL=yes \
+        JAVA_ARGS="-Dlog4j.configuration=file:///home/otptest/config/log4j.properties" \
+        MAKEFLAGS=$MAKEFLAGS
+
+COPY log4j.properties /home/otptest/config/log4j.properties
+
+COPY otp_src.tar.gz /daily_build
+RUN tar xzf otp_src.tar.gz
+
+RUN test "$BUILD_ID" != "" || { echo "Missing BUILD_ID" 1>&2; exit 1; }
+RUN echo "$BUILD_ID" > /daily_build/build_info/build_id
+RUN test "$BRANCH" != "" || { echo "Missing BRANCH" 1>&2; exit 1; }
+RUN echo "$BRANCH" > /daily_build/build_info/branch
+RUN test "$TIMESTAMP" != "" || { echo "Missing TIMESTAMP" 1>&2; exit 1; }
+RUN echo "$TIMESTAMP" > /daily_build/build_info/timestamp
+RUN test "$SHA" != "" || { echo "Missing SHA" 1>&2; exit 1; }
+RUN echo "$SHA" > /daily_build/build_info/sha
+
+WORKDIR otp_src

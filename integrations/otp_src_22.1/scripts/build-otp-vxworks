@@ -1,0 +1,30 @@
+#/bin/bash
+
+set -e
+set -x
+
+export SHELL=/bin/bash
+export TARGET=$1
+export TRIPLE=$2
+export ERL_TOP=/daily_build/vxworks
+export TARGET_DIR="$ERL_TOP/release/"
+export WIND_BASE=/WindRiver/
+export WIND_HOME=/WindRiver/
+export WIND_REGISTRY=sauron.otp.ericsson.se
+export PATH=/daily_build/otp/bin:$PATH
+export HOST_TYPE=x86-linux2
+export WIND_HOST_TYPE=x86-linux2
+export PATH=$WIND_BASE/gnu/3.4.4-vxworks-6.3/$WIND_HOST_TYPE/bin:$PATH
+export PATH=$WIND_BASE/gnu/3.4.4-vxworks-6.3/$WIND_HOST_TYPE/libexec/gcc/$TRIPLE/3.4.4:$PATH
+export TESTROOT="$ERL_TOP"
+mkdir $ERL_TOP && cd $ERL_TOP && tar xzf /daily_build/otp_src.tar.gz --strip-components=1
+eval `./otp_build env_vxworks $TARGET`
+./otp_build autoconf
+export CFLAGS="-w -O0" # We don't want any warnings
+./otp_build configure
+(cd $ERL_TOP/erts/epmd && make release)
+(cd $ERL_TOP/lib/erl_interface && make release)
+(cd $ERL_TOP/lib/jinterface && make release)
+if [ -d $ERL_TOP/lib/ic ]; then
+    (cd $ERL_TOP/lib/ic && make release)
+fi

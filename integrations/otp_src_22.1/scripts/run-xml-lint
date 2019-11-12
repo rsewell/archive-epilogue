@@ -1,0 +1,23 @@
+#/bin/sh
+
+if  grep "xmllint:" Makefile 2>&1 1>/dev/null; then
+    make xmllint
+else
+
+    cd $ERL_TOP/lib
+    for apps in $(ls -d */)
+    do
+        if [ -d $ERL_TOP/lib/${apps%%/}/doc/src ];
+        then
+            echo $apps
+            (cd $ERL_TOP/lib/${apps%%/}/doc/src && make xmllint)
+        fi
+    done
+
+    cd $ERL_TOP
+    for specials in erts/doc/src system/doc/system_architecture_intro system/doc/programming_examples system/doc/embedded system/doc/efficiency_guide system/doc/tutorial system/doc/design_principles  system/doc/reference_manual system/doc/oam system/doc/getting_started system/doc/top system/doc/system_principles system/doc/installation_guide
+    do
+        echo $specials
+        (cd $ERL_TOP/$specials && make xmllint)
+    done
+fi
