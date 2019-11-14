@@ -44,7 +44,7 @@ style='font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nb
 
 <p class=MsoNormal>On top of this infrastructure analytics capabilities are
 built that span a large virtual memory and storage space that enforce data
-rules around (GRDP, and other governance and restriction requirements).</p>
+rules around (GDPR, and other governance and restriction requirements).</p>
 
 <p class=MsoNormal>Epilogue should not be viewed as a data store but as a vault
 implementation of an object store where objects have intelligence relative to
