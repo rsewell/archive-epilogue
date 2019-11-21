@@ -1,0 +1,19 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+ARG FAST_BUILD=false
+ARG MAKEFLAGS=-j8
+ENV MAKEFLAGS=$MAKEFLAGS \
+        ERL="erl"
+
+USER otptest
+RUN exec 2>&1 && \
+    ./otp_build autoconf && \
+    ./configure $CONFIG_FLAGS && \
+    make && \
+    make release RELEASE_ROOT=$install_dir
+
+WORKDIR $install_dir
+RUN ./Install -minimal $install_dir
+
+ENV PATH=$install_dir/bin:$ERL_TOP/bin:$PATH

@@ -1,0 +1,22 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+RUN cd $ERL_TOP/erts/emulator && make generate TYPE=valgrind && \
+        cd $ERL_TOP/erts/lib_src && make release TYPE=valgrind TESTROOT=$install_dir && \
+        cd $ERL_TOP/erts/emulator && make release TYPE=valgrind TESTROOT=$install_dir && \
+        (cd $ERL_TOP/lib/crypto && rm -f priv/obj/*/*.o && cd c_src && make valgrind && \
+        make release TYPE=valgrind TESTROOT=$install_dir) && \
+        (ERTS_DIR=$(ls -d -1 $install_dir/erts-*) && cp $ERL_TOP/bin/cerl $install_dir/bin/ && \
+        sed -i "s:^ROOTDIR=.*:ROOTDIR=$install_dir:g" $install_dir/bin/cerl && \
+        sed -i "s:^BINDIR=.*:BINDIR=$ERTS_DIR/bin:g" $install_dir/bin/cerl)
+
+ENV VALGRIND_LOG_DIR=/daily_build/valgrind_logs
+ENV VALGRIND_LOG_XML=yes
+ENV TS_EXTRA_PLATFORM_LABEL="Valgrind"
+ENV TS_RUN_VALGRIND=yes
+
+RUN mkdir $VALGRIND_LOG_DIR
+
+ENV ERL_ZFLAGS="+Meamin -smp"
+
+ENV ERL="cerl -valgrind"

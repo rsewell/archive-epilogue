@@ -1,0 +1,391 @@
+// -*- groovy -*-
+HTTP_PROXY = "http://www-proxy.otp.ericsson.se:8080"
+HTTPS_PROXY = "http://www-proxy.otp.ericsson.se:8080"
+NO_PROXY = "localhost,127.0.0.1,.otp.ericsson.se,otp.ericsson.se,otp,erlang,support,nessie,wiki,monitor,jenkins"
+
+DOCKER_ARGS = "--ulimit core=-1 --ulimit nofile=5000:5000 "
+DOCKER_VOLUMES = "--volume=\"/home/otptest/.ssh:/home/otptest/.ssh:rw\" " +
+    "--volume=\"/usr/local/otp/releases:/usr/local/otp/releases:ro\" " +
+    "--volume=\"/home/otptest/valparse:/home/otptest/valparse:ro\""
+DOCKER_RUN_ARGS = "--cpus=\"4\" --cap-add=SYS_PTRACE --security-opt seccomp=unconfined ${DOCKER_VOLUMES} ${DOCKER_ARGS}"
+
+DOCKER_BUILD_ARGS = "${DOCKER_ARGS} " +
+    "--build-arg MAKEFLAGS=-j16 " +
+    "--build-arg https_proxy=${HTTP_PROXY} " +
+    "--build-arg http_proxy=${HTTP_PROXY} " +
+    "--build-arg HTTP_PROXY=${HTTP_PROXY} " +
+    "--build-arg HTTPS_PROXY=${HTTP_PROXY} " +
+    "--build-arg NO_PROXY=${NO_PROXY} " +
+    "--build-arg no_proxy=${NO_PROXY} scripts"
+
+DOCKER_INSIDE_ARGS = "${DOCKER_RUN_ARGS} --entrypoint=\"\" "
+
+DOCKER_REGISTRY = "apollo.otp.ericsson.se:5000/"
+
+DISPLAY = "frumgar.otp.ericsson.se:66"
+
+type = "docs"
+erl_flags = "+S4:4 "
+extra_flags = ""
+test_dir = ""
+log_dir = ""
+curr_log_name = ""
+curr_log_cnt = 1;
+motp_build_info = [:]
+MOTP_HOST = "monitor.otp.ericsson.se:8999"
+MOTP_PATH = "/builds"
+TS_EXTRA_PLATFORM_LABEL = ""
+img = ""
+hostname = ""
+smoke_test = true
+applications = ""
+refuse_tests_in_release_mode = false
+
+pipeline {
+    parameters {
+	string(name: 'IMAGE_BRANCH', defaultValue: 'master-opu', description: '')
+	string(name: 'IMAGE_BUILD_ID', defaultValue: 'latest', description: '')
+        string(name: 'TYPE', defaultValue: 'opt', description: 'opt, debug, lcnt, valgrind')
+        string(name: 'APPS', defaultValue: 'all',
+               description: 'Which applications to test (comma separated, i.e. "emulator,stdlib"),'+
+               'defaults to all.')
+    }
+    options {
+        // Limit pipeline to only one build per branch at the same time
+        timestamps();
+        timeout(time: params.TYPE == 'opt' ? 12 : (params.TYPE == 'debug' ? 36 : (24*5)),
+                unit: 'HOURS');
+    }
+
+    agent { label 'docker' }
+
+    stages {
+        stage('setup') { steps { script {
+            /* We the only trigger is an scm trigger,
+             we do not want to do a full build, instead we just
+             run a smoke test in order to test that this Jenkinfile
+             works. */
+            for (cause in currentBuild.rawBuild.getCauses()) {
+                if (!(cause instanceof hudson.triggers.SCMTrigger$SCMTriggerCause))
+                    smoke_test = false;
+            }
+
+            /* Add an info badge with the configuration params to the build */
+            params_string = "";
+            if (smoke_test) {
+                params_string = "Smoke test!";
+            } else {
+                params.each { key, value ->
+                    params_string+="${key}=${value} "
+                }
+            }
+            addBadge(icon: 'info.gif', text: params_string);
+            if (params.TYPE != 'opt') {
+                addBadge(icon: 'warning.gif', text: "This is a ${params.TYPE} build");
+            }
+
+            if (smoke_test) {
+                print "******* THIS IS A SMOKE TEST!!! ******"
+                applications = "os_mon";
+            } else {
+                DOCKER_INSIDE_ARGS += " --volume=\"/ldisk/daily_build:/ldisk/daily_build:rw\" ";
+		if (params.TYPE == "gcov" && params.APPS == "all") {
+		    applications = "emulator,stdlib,kernel,compiler,system,runtime_tools,observer";
+		}
+		else {
+		    applications = params.APPS;
+		}
+            }
+
+            if (params.IMAGE_BUILD_ID != 'latest') {
+	        lastBuildId = params.IMAGE_BUILD_ID;
+	    } else {
+	        otp_branch = Jenkins.instance.getItem('otp').getItemByBranchName(params.IMAGE_BRANCH);
+	        if (params.IMAGE_BRANCH == 'greypatch-opu') {
+	       	    // We cannot enforce all tests when using an arbitrary
+		    // OTP version as base. That is, use last build
+		    // instead of last successfull build when doing a
+		    // greypatch...
+	       	    lastBuildId = otp_branch.getLastBuild().number;
+	        }
+	        else {
+	       	    lastBuildId = otp_branch.getLastSuccessfulBuild().number;
+		    if (lastBuildId != otp_branch.getLastBuild().number) {
+		          // Refuse to run the tests if the branch is in
+		          // release mode (in order to prevent an erroneous
+			  // patch). If in test mode, we will do the tests
+			  // on the last successful build...
+		       	  refuse_tests_in_release_mode = true;
+		    }
+	        }
+            }
+
+            hostname = sh_ret("hostname").split("-")[1];
+            if (params.TYPE == "debug" || params.TYPE == "lcnt") {
+                type = "special";
+                erl_flags += "-emu_type ${params.TYPE} ";
+                TS_EXTRA_PLATFORM_LABEL = "${params.TYPE}/";
+            } else if (params.TYPE != "opt") {
+                type = "${params.TYPE}";
+                TS_EXTRA_PLATFORM_LABEL = "${params.TYPE}/";
+            }
+        } } }
+        stage('build image') { steps { script {
+            docker.withRegistry("http://" + DOCKER_REGISTRY) {
+                img = docker.image("${DOCKER_REGISTRY}otp-${type}-" +
+                                   "${params.IMAGE_BRANCH}:${lastBuildId}");
+                try {
+                    img.pull();
+                } catch (Exception ex) {
+                    /*
+                     No docker image was found, so we try to build it using
+                     Dockerfile.pack-${type}, Dockerfile.run-tests and Dockerfile.run-${type}.
+                     At the moment this is only for valgrind, but could be for more types
+                     in the future.
+                     */
+                    img = docker.image("${DOCKER_REGISTRY}otp-src-${params.IMAGE_BRANCH}:${lastBuildId}");
+                    src_type_name = "otp-src-${type}-${params.IMAGE_BRANCH}:${lastBuildId}"
+                    img = docker.build(
+                        src_type_name,
+                        "-f scripts/Dockerfile.pack-${params.TYPE} " +
+                            "--build-arg \"BASE_IMAGE=${img.imageName()}\" " +
+                            "${DOCKER_BUILD_ARGS}");
+                    run_tests_type_name = "otp-${type}-tmp-${params.IMAGE_BRANCH}:${lastBuildId}"
+                    img = docker.build(
+                        run_tests_type_name,
+                        "-f scripts/Dockerfile.run-tests " +
+                            "--build-arg \"FAST_BUILD=true\" " +
+                            "--build-arg \"BASE_IMAGE=${src_type_name}\" " +
+                            "${DOCKER_BUILD_ARGS}");
+                    img = docker.build(
+                        "otp-${type}-${params.IMAGE_BRANCH}:${lastBuildId}",
+                        "-f scripts/Dockerfile.run-${params.TYPE} " +
+                            "--build-arg \"BASE_IMAGE=${run_tests_type_name}\" " +
+                            "${DOCKER_BUILD_ARGS}");
+                    img.push("latest");
+                    img.push("${lastBuildId}");
+                }
+            }
+        } } }
+        stage('run tests') { steps { script {
+	    docker.withRegistry("http://" + DOCKER_REGISTRY) {
+	        img.inside("--hostname=${hostname} " + DOCKER_INSIDE_ARGS) {
+
+		    user = sh_ret("whoami")
+
+                    // Do some tests to check that the environment is configured correctly
+                    core_pattern = get_file("/proc/sys/kernel/core_pattern");
+                    if (core_pattern != "core.%p")
+                        error("An incorrect core file pattern detected! "+
+                              "/proc/sys/kernel/core_pattern = " + core_pattern);
+                    if (user != "otptest")
+                        error("The test is run as the wrong user!!");
+
+                    if (smoke_test)
+                        sh "sudo mkdir -p /ldisk/daily_build && sudo chown -R otptest:uucp /ldisk"
+
+		    if (refuse_tests_in_release_mode) {
+	       	       branch_mode = sh_ret("\${ERL_TOP}/scripts/get_otp_branch_mode \${ERL_TOP}");
+		       if (branch_mode == "release") {
+		            error("Refuse to run tests! Branch is in RELEASE mode, "+
+                                  "but the latest build was not successful...");
+		       }
+		    }
+
+                    // Can't be fixed in this way in the docker-file (as system.d suack),because /var 
+		    // is mounted when the docker is run and therefore anything in /var disapears
+		    // see ERL_ROOT/lib/ssh/test/ssh_compat_SUITE_data/build_scripts/create-base-image
+		    // for alternative solution
+                    sh("sudo mkdir -p -m0755 /var/run/sshd");
+
+                    // Start ssh daemon for the ssh tests
+		    sh("sudo /usr/sbin/sshd && ps ax");
+
+		    ext_dir = sh_ret("\${ERL_TOP}/scripts/create_ext_dirs " +
+                                     "\${BUILD_ID} ${DOCKER_REGISTRY} ${params.TYPE}");
+                    TS_EXTRA_PLATFORM_LABEL += "Docker/${BUILD_ID}";
+		    log_dir = "$ext_dir/logs";
+		    test_dir = "$ext_dir/test";
+		    docs_dir = "$ext_dir/docs";
+                    // 'log01.docker' log is created by the 'create_log_dirs' script
+                    curr_log_name = "docker";
+
+                    withCredentials([sshUserPrivateKey(credentialsId: 'otptest',
+                                                       keyFileVariable: 'SSH_KEY_FILE',
+                                                       passphraseVariable: '',
+                                                       usernameVariable: 'SSH_USER')]) {
+                        sh_log("scp -r -i ${SSH_KEY_FILE} ${SSH_USER}@isildur:/home/otp/config-specs/ts.* ${test_dir}")
+                    }
+
+                    motp_init();
+
+		    if (params.TYPE == "opt") {
+		        sh_log("cd \$ERL_TOP && make release_docs RELEASE_ROOT=${docs_dir}","release_docs");
+                    } else if (params.TYPE == "valgrind") {
+                        sh "mkdir ${ext_dir}/valgrind_logs"
+                        extra_flags ="export VALGRIND_LOG_DIR=${ext_dir}/valgrind_logs && ";
+                    }
+                    
+		    sh_log("\$ERL_TOP/otp_build tests ${test_dir}","release_tests");
+
+                    erl = "export TS_EXTRA_PLATFORM_LABEL=${TS_EXTRA_PLATFORM_LABEL} && " +
+                        "export ERL_AFLAGS='${erl_flags}' && " +
+                        "export TEST_CONFIG_PATH=${test_dir} && " +
+                        extra_flags +
+                        "cd ${test_dir}/test_server && " +
+                        "\$ERL -noinput ";
+
+                    sh_log(erl + " -s ts install -s init stop", "test", "ts install")
+
+                    if (applications == "all") {
+                        applications = sh_ret(
+                            "cd ${test_dir}/test_server && " +
+                                "erl -noinput -eval \"[erlang:display(Test) || Test <- ts:tests()]\" -run init stop").split('[\\r\\n ]+');
+                    } else {
+                        applications = applications.split(",");
+                    }
+
+		    applications.each { app ->
+                        sh_log(erl + "-env DISPLAY ${DISPLAY} " +
+                               "-env OTP_DAILY_BUILD_TOP_DIR ${ext_dir} " +
+                               "-env USER ${user} " +
+                               "-s ts run ${app.trim()} -s init stop", "test",
+                               "Testing ${app.trim()}");
+                        if (params.TYPE == "valgrind") {
+                            sh_log("/bin/bash /home/otptest/valparse/do_valparse.sh",
+                                   "test","Updating valgrind logs");
+                        }
+		    }
+		    if (params.TYPE == "gcov") {
+                        sh_log("\$ERL_TOP/erts/etc/unix/gcov-gen-html \$ERL_TOP ${ext_dir}/gcov-html",
+                               "gcov","Generate gcov html");
+                    }
+
+                    // These motp info tupes are always the same for docker builds
+                    motp_build_info.put("emulator","64");
+                    motp_build_info.put("smp","true");
+                    motp_build_info.put("async","1");
+                    motp_build_info.put("kp","true");
+                    motp_write_build_info("${test_dir}/test_server");
+                    if (!smoke_test) {
+		        withCredentials([sshUserPrivateKey(credentialsId: 'otptest',
+                                                           keyFileVariable: 'SSH_KEY_FILE',
+                                                           passphraseVariable: '',
+                                                           usernameVariable: 'SSH_USER')]) {
+                            sh_log("\${ERL_TOP}/scripts/save_test_results ${ext_dir} 2>&1","save_tests");
+                            save_log = get_file(get_log_name());
+                            sh "echo \"${save_log}\""
+                            def dest_dir = (save_log =~ /dest_dir: (.*)/)
+                            motp_build_info.put("folder",dest_dir[0][1])
+                        }
+                    }
+	        }
+	    } } } }
+    }
+    post {
+        success { script {
+            if (img != "" && !smoke_test) { docker.withRegistry("http://" + DOCKER_REGISTRY) {
+                img.inside("--hostname=${hostname} " + DOCKER_INSIDE_ARGS) {
+		    sh_log("echo 'done'","done");
+                }
+            } }
+        } }
+        failure { script {
+            if (img != "" && !smoke_test) { docker.withRegistry("http://" + DOCKER_REGISTRY) {
+                img.inside("--hostname=${hostname} " + DOCKER_INSIDE_ARGS) {
+		    sh_log("echo 'abort'","aborted");
+                }
+            } }
+        } }
+        unsuccessful {
+            emailext subject: '${DEFAULT_SUBJECT}',
+                body: '${SCRIPT, template="groovy-text.template"}',
+                to: 'lukas@erlang.org',
+//                recipientProviders: [[$class: 'CulpritsRecipientProvider']],
+                presendScript: '${DEFAULT_PRESEND_SCRIPT}'
+        }
+    }
+}
+
+def motp_init() {
+    def branch = params.IMAGE_BRANCH;
+    def triplet = sh_ret('$ERL_TOP/erts/autoconf/config.guess').split("-", 3);
+    def rel = get_file('$ERL_TOP/OTP_VERSION').split("\\.")[0];
+    def packed = get_file("/daily_build/build_info/timestamp").split("_")[0].replace("-","_");
+
+    motp_build_info = ["host": hostname,
+                       "release": rel,
+                       "os": triplet[2],
+                       "cpu": triplet[0],
+                       "packed": packed,
+                       "branch": branch,
+                       "commercial": "true"];
+    if (params.TYPE != "opt")
+        motp_build_info.put("extra", params.TYPE);
+    def bid = motp_post("", "init");
+    motp_build_info.put("bid", bid);
+    motp_post("", "docker");
+}
+
+def motp_qs(status) {
+    def qs = "status=${status}";
+    if (status != "init")
+        qs += "&log=${get_log_name()}";
+    motp_build_info.each { key, val ->
+        qs += "&${key}=${val}"
+    }
+    return qs;
+}
+
+def motp_write_build_info(dir) {
+    sh_ret("echo '${motp_qs(motp_build_info["status"])}' > ${dir}/motp_build_info")
+}
+
+def motp_post(url, status, type = 'APPLICATION_FORM') {
+    def qs = motp_qs(status);
+    motp_url = "http://${MOTP_HOST}${MOTP_PATH}";
+    if (smoke_test) {
+        sh "echo 'POST ${qs} to ${motp_url}'";
+        return "1";
+    } else if (motp_build_info["bid"] == "1") {
+        /* The build has not been initialized yet so we try to initialize it.
+           This normally happens when monitor cannot be contacted for some
+           reason. */
+        motp_init();
+    }
+    try {
+        response = httpRequest([contentType: type, httpMode: 'POST',
+                                requestBody: qs, url: motp_url])
+        return response.content;
+    } catch (Exception ex) {
+        echo "Failed to contact monitor"
+        return "1";
+    }
+}
+
+def get_log_name() {
+    return "${log_dir}/log${sprintf("%02d", curr_log_cnt)}.${curr_log_name}";
+}
+
+def sh_ret(cmd) {
+    return sh([script: cmd, returnStdout: true]).trim();
+}
+
+def sh_log(cmd, status = "", title = "") {
+    if (status == "")
+        status = curr_log_name;
+    if (title == "")
+        title = status;
+
+    if (status != curr_log_name) {
+        curr_log_cnt++;
+        curr_log_name = status;
+        motp_post("", status);
+    }
+
+    return sh([script: cmd + "| tee -a ${get_log_name()}", label: title]);
+}
+
+def get_file(filename) {
+    return sh_ret("cat ${filename}");
+}

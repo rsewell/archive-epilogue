@@ -1,0 +1,9 @@
+{
+    "proposed_updates_branch": "opu",
+    "tip_sha": "7ee082bf805018caedfc1fe49978c389e95fcf78",
+    "base_sha": "baddc3dc78e1723ba976b39cf25b51b9a24d6250",
+    "build_tag": "build/opu/2019-09-17_11.25",
+    "topic_branches": [
+
+    ]
+}

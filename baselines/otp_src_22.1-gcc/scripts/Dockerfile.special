@@ -1,0 +1,23 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+WORKDIR /daily_build/otp_src
+
+ENV OTP_STRICT_INSTALL=no
+
+RUN exec 2>&1 && \
+    OTP_VSN=`erl -noshell -eval 'io:format("~s~n",[erlang:system_info(otp_release)]).' -s init stop` && \
+    if [ $OTP_VSN -lt 22 ]; then \
+      for dir in erts/lib_src erts/emulator lib erts/epmd; do \
+        cd $ERL_TOP/$dir && \
+        make release TYPE=debug TESTROOT=$install_dir && \
+        make release TYPE=lcnt TESTROOT=$install_dir; \
+      done \
+    else \
+        make release TYPE=debug RELEASE_ROOT=$install_dir && \
+        make release TYPE=lcnt RELEASE_ROOT=$install_dir; \
+    fi
+
+ENV OTP_STRICT_INSTALL=yes
+
+WORKDIR /daily_build

@@ -1,0 +1,26 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+ARG FAST_BUILD=false
+
+WORKDIR $ERL_TOP
+
+RUN ${FAST_BUILD} \
+    || (exec 2>&1 && \
+    	make docs && \
+    	make release_docs RELEASE_ROOT=$install_dir)
+
+#
+# Check that install/release isn't totally broken
+# by installing/releasing as another user...
+USER otp
+RUN exec 2>&1 && \
+    scripts/check_install \
+        `cat /daily_build/build_info/branch` \
+        /daily_build/otp_src \
+	/daily_build/check_install_dir \
+	${FAST_BUILD}
+
+USER otptest
+
+WORKDIR /daily_build

@@ -1,0 +1,74 @@
+// -*- groovy -*-
+HTTP_PROXY = "http://www-proxy:8080"
+HTTPS_PROXY = "http://www-proxy:8080"
+NO_PROXY = "localhost,127.0.0.1,.otp.ericsson.se,otp.ericsson.se,otp,erlang,support,nessie,wiki,monitor,jenkins"
+
+DOCKER_ARGS = "--ulimit core=-1 --ulimit nofile=1000000:1000000 "
+DOCKER_RUN_ARGS = "--security-opt seccomp=unconfined --cap-add=SYS_PTRACE ${DOCKER_ARGS} "
+DOCKER_BUILD_ARGS = "${DOCKER_ARGS} --build-arg MAKEFLAGS=-j16 --build-arg https_proxy=${HTTP_PROXY} --build-arg http_proxy=${HTTP_PROXY} --build-arg HTTP_PROXY=${HTTP_PROXY} --build-arg HTTPS_PROXY=${HTTP_PROXY} --build-arg NO_PROXY=${NO_PROXY} --build-arg no_proxy=${NO_PROXY} scripts"
+
+DOCKER_INSIDE_ARGS = "${DOCKER_RUN_ARGS} --entrypoint=\"\" "
+
+DOCKER_REGISTRY = "apollo.otp.ericsson.se:5000/"
+
+slave = null
+
+pipeline {
+    parameters {
+	string(name: 'IMAGE_BRANCH', defaultValue: 'master-opu', description: '')
+	string(name: 'IMAGE_BUILD_ID', defaultValue: 'latest', description: '')
+        string(name: 'APPS', defaultValue: "all",
+               description: 'Which applications to test (comma separated),'+
+               "defaults to ts:benchmarks() ++ edev.")
+    }
+
+    options {
+        // Limit pipeline to only one build per branch at the same time
+        disableConcurrentBuilds();
+        timestamps();
+        buildDiscarder(logRotator(numToKeepStr: '50'));
+    }
+
+    agent { label 'docker' }
+
+    stages {
+        stage('pack') { steps { script { dockReg {
+            img = docker.image("${DOCKER_REGISTRY}otp-${params.IMAGE_BRANCH}:${params.IMAGE_BUILD_ID}");
+	    img.pull();
+            img.inside(DOCKER_INSIDE_ARGS) {
+                sh "cd \$install_dir && cp /daily_build/build_info/sha . && " +
+                    "tar czf \$WORKSPACE/otp.tar.gz *"
+            }
+            stash name: "otp.tar.gz", includes: "otp.tar.gz"
+        } } } }
+        stage("build") {
+            agent { label 'benchmark' }
+            steps {
+                unstash "otp.tar.gz";
+                sh([script: "scripts/build-otp-benchmarks",
+                    label: "build benchmark framework"])
+                script {
+                    def apps = params.APPS;
+                    if (apps == "all") {
+                        get_bench_apps = "find . -name '*_bench.spec' | sed -e 's:[\\./_]: :g' | awk '{ printf \$2 \" \" }'";
+                        apps = sh([script: get_bench_apps, returnStdout: true]).trim();
+                        apps += " edev";
+                    }
+                    apps.split("[, ]+").each({ app ->
+                        sh([script: "scripts/run-otp-benchmarks \"${app}\" \"${IMAGE_BRANCH}\" " +
+                            // We add 14000 to the build id in order to not clash with
+                            // the monitor bench db build ids for the previous jenkins
+                            "\"${BUILD_ID.toInteger() + 14000}\"",
+                            label: "benchmark ${app}"])
+                    })
+                }
+            }
+        }
+    }
+}
+
+def dockReg(body) {
+    docker.withRegistry("http://" + DOCKER_REGISTRY) {
+        body();
+    }
+}

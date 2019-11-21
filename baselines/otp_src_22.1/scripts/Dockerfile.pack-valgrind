@@ -1,0 +1,21 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+USER root
+
+RUN apt-get install --fix-missing -y valgrind bc
+
+ADD http://erlang.org/~sverker/valgrind.leak-address.tar.gz /valgrind/
+
+RUN cd /valgrind && \
+    tar xf valgrind.leak-address.tar.gz && \
+    mkdir -p installed && \
+    ./configure --prefix=/valgrind/installed && \
+    make && \
+    make install
+
+USER otptest
+
+ENV PATH=/valgrind/installed/bin:$PATH
+
+ENV CONFIG_FLAGS="--without-dialyzer --without-wx --without-debugger --without-observer --without-et --without-megaco --without-diameter --without-edoc --without-erl_docgen --without-appmon --without-asn1 --without-jinterface --without-reltool --without-gs --without-ic --without-mnesia --without-orber --without-pman --without-ssl --without-toolbar --without-tv --without-odbc --without-cosTransactions --without-cosEvent --without-cosTime --without-cosNotification --without-cosProperty --without-cosFileTransfer --without-cosEventDomain --without-webtool --without-ssh --without-typer --without-percept --without-eldap --disable-hipe"

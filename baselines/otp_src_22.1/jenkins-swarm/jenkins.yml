@@ -1,0 +1,65 @@
+version: '3.1'
+# networks:
+#   jenkins:
+#     driver: bridge
+#     ipam:
+#       config:
+#         - subnet: 172.18.1.0/24
+services:
+  registry:
+    # for the registry to work we need to add the master to insecure-registries
+    # > cat /etc/docker/daemon.json
+    # {
+    #     "graph": "/ldisk/docker",
+    #     "storage-driver": "aufs",
+    #     "insecure-registries" : ["apollo.otp.ericsson.se:5000"]
+    # }
+    image: registry:2
+    environment:
+      - REGISTRY_STORAGE_DELETE_ENABLED=true
+    ports:
+      - 5000:5000
+    volumes:
+      - "/ldisk/docker-registry:/var/lib/registry"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+
+  server:
+    image: sekidocker.rnd.ki.sw.ericsson.se/proj-erlang/jenkins
+    labels:
+      co.elastic.logs/multiline.pattern: '^ '
+      co.elastic.logs/multiline.match: after
+    user: otptest
+    environment:
+      - JAVA_OPTS="-Dhttp.proxyHost=http://10.67.16.24 -Dhttp.proxyPort=8080 -Dhttps.proxyHost=http://10.67.16.24 -Dhttps.proxyPort=8080"
+    ports:
+      - ${UI_PORT:-8080}:8080
+      - ${AGENTS_PORT:-50000}:50000
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/ldisk/lukas/jenkins-data:/var/jenkins_home"
+    deploy:
+      placement:
+        constraints: [node.labels.jenkins_master == true]
+    depends_on:
+      - registry
+
+  slave:
+    image: sekidocker.rnd.ki.sw.ericsson.se/proj-erlang/jenkins-swarm-agent
+    labels:
+      co.elastic.logs/multiline.pattern: '^ '
+      co.elastic.logs/multiline.match: after
+    hostname: "runner-{{.Node.Hostname}}"
+    command: -master http://server:8080 -username lukas -password lukas -labels 'docker' -executors 5
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /ldisk/jenkins-workspace:/workspace
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.labels.jenkins_slave == true]
+    depends_on:
+      - server
+
+

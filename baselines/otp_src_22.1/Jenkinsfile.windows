@@ -1,0 +1,68 @@
+// -*- groovy -*-
+HTTP_PROXY = "http://www-proxy:8080"
+HTTPS_PROXY = "http://www-proxy:8080"
+NO_PROXY = "localhost,127.0.0.1,.otp.ericsson.se,otp.ericsson.se,otp,erlang,support,nessie,wiki,monitor,jenkins"
+
+sendFailEmail = true
+
+pipeline {
+
+    options {
+        // Limit pipeline to only one build per branch at the same time
+        disableConcurrentBuilds();
+    }
+
+    agent none
+    
+    stages {
+        stage('pack') {
+            agent { label 'docker' }
+	    steps { script {
+                sh 'git archive --format=tar.gz --prefix=otp_src/ -o scripts/otp_src.tar.gz HEAD'
+                stash name: "scripts", includes: "scripts/"
+            } }
+            post { failure { script {
+                sendFailEmail = false;
+            } } }
+	}
+        stage('windows') {
+	  agent { label 'windows' }
+          options {
+            skipDefaultCheckout(true)
+          }
+          stages {
+            stage("32-bit") {
+              options { timeout(time: 2, unit: 'HOURS'); }
+              steps {
+                sh 'rm -rf *'
+                unstash "scripts"
+                sh 'tar mxzf scripts/*.tar.gz --strip-components=1'
+                sh './scripts/build-otp-windows x86'
+              }
+            }
+            stage("64-bit") {
+              options { timeout(time: 2, unit: 'HOURS'); }
+              steps {
+                sh './bin/win32/epmd -kill || true'
+                sh 'rm -rf *'
+                unstash "scripts"
+                sh 'tar mxzf scripts/*.tar.gz --strip-components=1'
+                sh './scripts/build-otp-windows x64'
+              }
+            }
+          }
+        }
+    }
+    post {
+        unsuccessful { script {
+            if (sendFailEmail) {
+                /* See apollo:/ldisk/lukas/jenkins-data/email-templates/ for the template */
+                emailext subject: '${DEFAULT_SUBJECT}',
+                    body: '${SCRIPT, template="pack-and-build.template"}',
+                    to: 'lukas@erlang.org',
+                    recipientProviders: [[$class: 'CulpritsRecipientProvider']],
+                    presendScript: '${DEFAULT_PRESEND_SCRIPT}'
+            }
+        } }
+    }
+}
