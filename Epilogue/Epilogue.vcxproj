@@ -151,7 +151,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DarwinAbstractor.cpp" />
     <ClCompile Include="Epilogue.cpp" />
+    <ClCompile Include="EpilogueEngine.cpp" />
+    <ClCompile Include="LinuxAbstractor.cpp" />
+    <ClCompile Include="OSAbstractor.cpp" />
+    <ClCompile Include="Win32Abstractor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DarwinAbstractor.h" />
+    <ClInclude Include="Epilogue.h" />
+    <ClInclude Include="EpilogueEngine.h" />
+    <ClInclude Include="LinuxAbstractor.h" />
+    <ClInclude Include="OSAbstractor.h" />
+    <ClInclude Include="Win32Abstractor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

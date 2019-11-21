@@ -18,5 +18,40 @@
     <ClCompile Include="Epilogue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OSAbstractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LinuxAbstractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DarwinAbstractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32Abstractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EpilogueEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Epilogue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OSAbstractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LinuxAbstractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DarwinAbstractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Win32Abstractor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EpilogueEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

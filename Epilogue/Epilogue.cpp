@@ -3,8 +3,14 @@
 
 #include <iostream>
 
-int main()
-{
+int main() {
+	int haltAfterwards = 0;					// If true, put 's erlang halt' at the end * of the arguments.
+
+
+
+
+
+
     std::cout << "Hello World!\n";
 }
 

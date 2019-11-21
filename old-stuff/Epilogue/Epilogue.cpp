@@ -128,10 +128,11 @@ build_new_argv:
 	*argc = ab.argc - 1;
 }
 
-
+//-------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
 
 int main() {
-	int haltAfterwards = 0;					/* If true, put 's erlang halt' at the end * of the arguments. */
+    
 	int isdistributed = 0;
 	int no_epmd = 0;
 	int i;

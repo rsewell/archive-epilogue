@@ -1,0 +1,6 @@
+﻿  DarwinAbstractor.cpp
+  LinuxAbstractor.cpp
+  OSAbstractor.cpp
+  Win32Abstractor.cpp
+  Generating Code...
+  Epilogue.vcxproj -> C:\Users\raswo\Projects\Epilogue\Epilogue\x64\Debug\Epilogue.exe

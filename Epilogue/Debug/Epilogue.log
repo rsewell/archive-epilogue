@@ -1,0 +1,26 @@
+﻿  LinuxAbstractor.cpp
+  __WIN64 not defined
+C:\Users\raswo\Projects\Epilogue\Epilogue\LinuxAbstractor.cpp(8,1): error C4996: 'getenv': This function or variable may be unsafe. Consider using _dupenv_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdlib.h(1191): message : see declaration of 'getenv'
+C:\Users\raswo\Projects\Epilogue\Epilogue\LinuxAbstractor.cpp(19,14): error C3861: 'emalloc': identifier not found
+C:\Users\raswo\Projects\Epilogue\Epilogue\LinuxAbstractor.cpp(24,3): error C3861: 'error': identifier not found
+C:\Users\raswo\Projects\Epilogue\Epilogue\LinuxAbstractor.cpp(26,2): error C3861: 'efree': identifier not found
+C:\Users\raswo\Projects\Epilogue\Epilogue\LinuxAbstractor.cpp(21,1): error C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1774): message : see declaration of 'sprintf'
+C:\Users\raswo\Projects\Epilogue\Epilogue\LinuxAbstractor.cpp(23,1): error C4996: 'putenv': The POSIX name for this item is deprecated. Instead, use the ISO C and C++ conformant name: _putenv. See online help for details.
+  OSAbstractor.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdlib.h(1354): message : see declaration of 'putenv'
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdlib.h(1354): message : __WIN64 not defined
+C:\Users\raswo\Projects\Epilogue\Epilogue\OSAbstractor.cpp(15,1): error C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1469): message : see declaration of 'vsprintf'
+C:\Users\raswo\Projects\Epilogue\Epilogue\OSAbstractor.cpp(26,1): error C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1469): message : see declaration of 'vsprintf'
+C:\Users\raswo\Projects\Epilogue\Epilogue\OSAbstractor.cpp(37,1): error C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1469): message : see declaration of 'vsprintf'
+C:\Users\raswo\Projects\Epilogue\Epilogue\OSAbstractor.cpp(48,1): error C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1469): message : see declaration of 'vsprintf'
+C:\Users\raswo\Projects\Epilogue\Epilogue\OSAbstractor.cpp(59,1): error C4996: 'vsprintf': This function or variable may be unsafe. Consider using vsprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  Win32Abstractor.cpp
+  Generating Code...
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1469): message : see declaration of 'vsprintf'
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\ucrt\stdio.h(1469): message : __WIN64 not defined
