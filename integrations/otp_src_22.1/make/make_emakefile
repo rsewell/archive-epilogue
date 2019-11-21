@@ -1,4 +1,4 @@
-#!/usr/bin/env /usr/local/bin/perl
+#!/usr/bin/env /usr/bin/perl
 # -*- cperl -*-
 
 use strict;

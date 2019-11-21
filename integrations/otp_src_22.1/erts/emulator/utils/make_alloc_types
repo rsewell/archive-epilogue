@@ -19,6 +19,8 @@
 # 
 # %CopyrightEnd%
 
+print STDOUT "THIS IS A TEST !!!!!! $ARGC, $ARGV[0], $ARGV[1], $ARGV[2], $ARGV[3], $ARGV[4], $ARGV[5]\n";
+
 use strict;
 # use warnings;
 
@@ -84,6 +86,9 @@ my @cond_stack;
 while ($line = <SRC>) {
   $line_no = $line_no + 1;
   $line = preprocess_line($line);
+
+
+  print STDOUT "$line_no: $line \n";
 
   if ($line =~ /^(\S+)\s*(.*)/) {
     $decl = $1;
