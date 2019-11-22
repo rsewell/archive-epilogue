@@ -107,7 +107,7 @@ endif
 endif
 endif
 
-CC = icc
+CC = gcc
 LD = ld
 AR = ar
 RANLIB = ranlib

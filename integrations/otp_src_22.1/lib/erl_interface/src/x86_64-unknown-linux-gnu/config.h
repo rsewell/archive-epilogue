@@ -23,39 +23,39 @@
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_add_fetch() can handle on your system */
-#define ETHR_HAVE___atomic_add_fetch 28
+#define ETHR_HAVE___atomic_add_fetch 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_compare_exchange_n() can handle on your system */
-#define ETHR_HAVE___atomic_compare_exchange_n 28
+#define ETHR_HAVE___atomic_compare_exchange_n 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_fetch_and() can handle on your system */
-#define ETHR_HAVE___atomic_fetch_and 28
+#define ETHR_HAVE___atomic_fetch_and 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_fetch_or() can handle on your system */
-#define ETHR_HAVE___atomic_fetch_or 28
+#define ETHR_HAVE___atomic_fetch_or 12
 
 /* Define as a bitmask corresponding to the word sizes that __atomic_load_n()
    can handle on your system */
-#define ETHR_HAVE___atomic_load_n 28
+#define ETHR_HAVE___atomic_load_n 12
 
 /* Define as a bitmask corresponding to the word sizes that __atomic_store_n()
    can handle on your system */
-#define ETHR_HAVE___atomic_store_n 28
+#define ETHR_HAVE___atomic_store_n 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_add_and_fetch() can handle on your system */
-#define ETHR_HAVE___sync_add_and_fetch 28
+#define ETHR_HAVE___sync_add_and_fetch 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_fetch_and_and() can handle on your system */
-#define ETHR_HAVE___sync_fetch_and_and 28
+#define ETHR_HAVE___sync_fetch_and_and 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_fetch_and_or() can handle on your system */
-#define ETHR_HAVE___sync_fetch_and_or 28
+#define ETHR_HAVE___sync_fetch_and_or 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_synchronize() can handle on your system */
@@ -63,7 +63,7 @@
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_val_compare_and_swap() can handle on your system */
-#define ETHR_HAVE___sync_val_compare_and_swap 28
+#define ETHR_HAVE___sync_val_compare_and_swap 12
 
 /* Define to 1 if you have `alloca', as a function or macro. */
 #define HAVE_ALLOCA 1

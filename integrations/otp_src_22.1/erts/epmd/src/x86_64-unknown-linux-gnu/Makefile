@@ -62,7 +62,7 @@ endif
 
 ERTS_LIB = $(ERL_TOP)/erts/lib_src/obj/$(TARGET)/$(TYPE)/MADE
 
-CC      = icc
+CC      = gcc
 WFLAGS  = -Wall -Wstrict-prototypes -Wmissing-prototypes -Wdeclaration-after-statement
 CFLAGS  = -Werror=undef -Werror=implicit -Werror=return-type  -g -O2 -I/home/rsewell/Projects/Epilogue/integrations/otp_src_22.1/erts/x86_64-unknown-linux-gnu   -fno-tree-copyrename  -D_GNU_SOURCE -DHAVE_CONFIG_H $(TYPE_FLAGS) $(WFLAGS) $(ERTS_INCL)
 LD      = $(CC)

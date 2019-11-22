@@ -56,7 +56,7 @@ ERTS_INCL = -I$(ERL_TOP)/erts/include \
 
 EI_INCL   = -I$(ERL_TOP)/lib/erl_interface/include
 
-CC        = icc
+CC        = gcc
 WFLAGS    = -Wall -Wstrict-prototypes -Wmissing-prototypes -Wdeclaration-after-statement
 CFLAGS    = -Werror=undef -Werror=implicit -Werror=return-type  -g -O2 -I/home/rsewell/Projects/Epilogue/integrations/otp_src_22.1/erts/x86_64-unknown-linux-gnu   -fno-tree-copyrename  -D_GNU_SOURCE -DHAVE_CONFIG_H $(TYPE_FLAGS) -Wall -Wstrict-prototypes -Wmissing-prototypes -Wdeclaration-after-statement -I$(SYSOSDIR) -I$(EMUDIR) -I. \
             -I$(COMSYSDIR) $(ERTS_INCL) -DOTP_SYSTEM_VERSION=\"$(SYSTEM_VSN)\"

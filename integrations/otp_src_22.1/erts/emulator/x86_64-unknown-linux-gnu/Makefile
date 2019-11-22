@@ -248,16 +248,16 @@ ERTS_BUILD_FALLBACK_POLL=yes
 #
 #
 SHELL   = /bin/sh
-CC      = icc
+CC      = gcc
 ifeq ($(TARGET),win32)
 ifeq ($(TYPE),debug)
-EMU_CC  = icc
+EMU_CC  = gcc
 else
-EMU_CC  = icc
+EMU_CC  = gcc
 endif
 TYPE_FLAGS += -DSTATIC_ERLANG_DRIVER
 else
-EMU_CC  = icc
+EMU_CC  = gcc
 endif
 WFLAGS  = -Wall -Wstrict-prototypes -Wmissing-prototypes -Wdeclaration-after-statement
 CFLAGS  =  $(TYPE_FLAGS) $(FLAVOR_FLAGS) $(DEFS) $(WFLAGS) $(THR_DEFS) $(ARCHCFLAGS) $(GIT_VSN)
@@ -611,10 +611,10 @@ $(TTF_DIR)/TABLES-GENERATED: $(ATOMS) $(DIRTY_BIFS) $(BIFS) utils/make_tables
 	$(gen_verbose)LANG=C $(PERL) utils/make_tables -src $(TTF_DIR) -include $(TTF_DIR)\
 		-dst $(DS_TEST) -hipe $(HIPE) $(ATOMS) $(DIRTY_BIFS) $(BIFS) && echo $? >$(TTF_DIR)/TABLES-GENERATED
 GENERATE += $(TTF_DIR)/TABLES-GENERATED
-
-$(TTF_DIR)/erl_alloc_types.h: beam/erl_alloc.types utils/make_alloc_types
-	$(gen_verbose)LANG=C $(PERL) utils/make_alloc_types -src $< -dst $@ $(ENABLE_ALLOC_TYPE_VARS)
-GENERATE += $(TTF_DIR)/erl_alloc_types.h
+#
+#$(TTF_DIR)/erl_alloc_types.h: beam/erl_alloc.types utils/make_alloc_types
+#	$(gen_verbose)LANG=C $(PERL) utils/make_alloc_types -src $< -dst $@ $(ENABLE_ALLOC_TYPE_VARS)
+#GENERATE += $(TTF_DIR)/erl_alloc_types.h
 
 # version include file
 $(TARGET)/erl_version.h: ../vsn.mk $(ERL_TOP)/make/$(TARGET)/otp.mk
@@ -1077,7 +1077,7 @@ $(OBJDIR)/%.o: hipe/%.c
 $(BINDIR)/hipe_mkliterals$(TF_MARKER):	$(OBJDIR)/hipe_mkliterals.o
 	$(ld_verbose)$(CC) $(LDFLAGS) -o $@ $< $(ORIG_LIBS)
 
-$(OBJDIR)/hipe_mkliterals.o:	$(HIPE_ASM) $(TTF_DIR)/erl_alloc_types.h $(DTRACE_HEADERS) \
+$(OBJDIR)/hipe_mkliterals.o:	$(HIPE_ASM) $(ERL_TOP)/erts/emulator/beam/erl_alloc_types.h $(DTRACE_HEADERS) \
 	$(TTF_DIR)/OPCODES-GENERATED $(TTF_DIR)/TABLES-GENERATED
 
 $(TTF_DIR)/hipe_literals.h:	$(BINDIR)/hipe_mkliterals$(TF_MARKER)

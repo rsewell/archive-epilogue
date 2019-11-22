@@ -262,39 +262,39 @@
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_add_fetch() can handle on your system */
-#define ETHR_HAVE___atomic_add_fetch 28
+#define ETHR_HAVE___atomic_add_fetch 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_compare_exchange_n() can handle on your system */
-#define ETHR_HAVE___atomic_compare_exchange_n 28
+#define ETHR_HAVE___atomic_compare_exchange_n 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_fetch_and() can handle on your system */
-#define ETHR_HAVE___atomic_fetch_and 28
+#define ETHR_HAVE___atomic_fetch_and 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_fetch_or() can handle on your system */
-#define ETHR_HAVE___atomic_fetch_or 28
+#define ETHR_HAVE___atomic_fetch_or 12
 
 /* Define as a bitmask corresponding to the word sizes that __atomic_load_n()
    can handle on your system */
-#define ETHR_HAVE___atomic_load_n 28
+#define ETHR_HAVE___atomic_load_n 12
 
 /* Define as a bitmask corresponding to the word sizes that __atomic_store_n()
    can handle on your system */
-#define ETHR_HAVE___atomic_store_n 28
+#define ETHR_HAVE___atomic_store_n 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_add_and_fetch() can handle on your system */
-#define ETHR_HAVE___sync_add_and_fetch 28
+#define ETHR_HAVE___sync_add_and_fetch 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_fetch_and_and() can handle on your system */
-#define ETHR_HAVE___sync_fetch_and_and 28
+#define ETHR_HAVE___sync_fetch_and_and 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_fetch_and_or() can handle on your system */
-#define ETHR_HAVE___sync_fetch_and_or 28
+#define ETHR_HAVE___sync_fetch_and_or 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_synchronize() can handle on your system */
@@ -302,7 +302,7 @@
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_val_compare_and_swap() can handle on your system */
-#define ETHR_HAVE___sync_val_compare_and_swap 28
+#define ETHR_HAVE___sync_val_compare_and_swap 12
 
 /* Define if you want to modify the default stack size */
 /* #undef ETHR_MODIFIED_DEFAULT_STACK_SIZE */
@@ -347,7 +347,7 @@
 #define ETHR_SIZEOF___INT128_T 16
 
 /* Define to the size of __int64 */
-#define ETHR_SIZEOF___INT64 8
+#define ETHR_SIZEOF___INT64 0
 
 /* Define if you want to enable check for native ethread implementations */
 #define ETHR_SMP_REQUIRE_NATIVE_IMPLS 1
@@ -393,7 +393,7 @@
 /* #undef HAVE_CLOSEFROM */
 
 /* Define if you have a decl of fread that conflicts with int fread */
-/* #undef HAVE_CONFLICTING_FREAD_DECLARATION */
+#define HAVE_CONFLICTING_FREAD_DECLARATION 1
 
 /* Define if you have a putenv() that stores a copy of the key-value pair */
 /* #undef HAVE_COPYING_PUTENV */
@@ -653,7 +653,7 @@
 /* #undef HAVE_IN_ADDR6_STRUCT */
 
 /* Define to 1 if you have the `isfinite' function. */
-#define HAVE_ISFINITE 1
+/* #undef HAVE_ISFINITE */
 
 /* Define to 1 if you have the `isinf' function. */
 #define HAVE_ISINF 1
@@ -1187,7 +1187,7 @@
 #define SIZEOF___INT128_T 16
 
 /* The size of `__int64', as computed by sizeof. */
-#define SIZEOF___INT64 8
+#define SIZEOF___INT64 0
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1

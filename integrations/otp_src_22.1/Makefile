@@ -248,7 +248,7 @@ endif
 # The following is currently only used for determining what to prevent
 # usage of during strict install or release.
 include $(ERL_TOP)/make/$(TARGET)/otp_ded.mk
-CC	= icc
+CC	= gcc
 LD	= ld
 CXX	= g++
 

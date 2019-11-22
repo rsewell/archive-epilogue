@@ -20,7 +20,7 @@
 include $(ERL_TOP)/make/target.mk
 include $(ERL_TOP)/make/$(TARGET)/otp.mk
 
-CC = icc
+CC = gcc
 LD = $(CC)
 LIBS = -lutil -ldl -lm   
 CPU_SUP_LIBS = 

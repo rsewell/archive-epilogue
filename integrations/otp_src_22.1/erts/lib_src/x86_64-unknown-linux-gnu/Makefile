@@ -25,7 +25,7 @@ include ../include/internal/$(TARGET)/ethread.mk
 OMIT_OMIT_FP=no
 
 
-CC=icc
+CC=gcc
 LD=$(CC)
 AR=ar
 RANLIB=ranlib
@@ -547,7 +547,7 @@ ifeq ($(USING_VC),yes)
 # VC++ used for compiling. We undef __GNUC__ since if __GNUC__ is defined
 # we will include other headers than when compiling which will result in
 # faulty dependencies.
-#DEP_CC=icc -U__GNUC__
+#DEP_CC=gcc -U__GNUC__
 DEP_CC=$(CC)
 else
 DEP_CC=$(CC)

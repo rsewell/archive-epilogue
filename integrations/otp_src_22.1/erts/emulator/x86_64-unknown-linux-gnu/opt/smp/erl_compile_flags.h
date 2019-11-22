@@ -265,39 +265,39 @@ const char* erts_build_flags_CONFIG_H = "/* x86_64-unknown-linux-gnu/config.h.  
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __atomic_add_fetch() can handle on your system */\n\
-#define ETHR_HAVE___atomic_add_fetch 28\n\
+#define ETHR_HAVE___atomic_add_fetch 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __atomic_compare_exchange_n() can handle on your system */\n\
-#define ETHR_HAVE___atomic_compare_exchange_n 28\n\
+#define ETHR_HAVE___atomic_compare_exchange_n 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __atomic_fetch_and() can handle on your system */\n\
-#define ETHR_HAVE___atomic_fetch_and 28\n\
+#define ETHR_HAVE___atomic_fetch_and 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __atomic_fetch_or() can handle on your system */\n\
-#define ETHR_HAVE___atomic_fetch_or 28\n\
+#define ETHR_HAVE___atomic_fetch_or 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that __atomic_load_n()\n\
    can handle on your system */\n\
-#define ETHR_HAVE___atomic_load_n 28\n\
+#define ETHR_HAVE___atomic_load_n 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that __atomic_store_n()\n\
    can handle on your system */\n\
-#define ETHR_HAVE___atomic_store_n 28\n\
+#define ETHR_HAVE___atomic_store_n 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __sync_add_and_fetch() can handle on your system */\n\
-#define ETHR_HAVE___sync_add_and_fetch 28\n\
+#define ETHR_HAVE___sync_add_and_fetch 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __sync_fetch_and_and() can handle on your system */\n\
-#define ETHR_HAVE___sync_fetch_and_and 28\n\
+#define ETHR_HAVE___sync_fetch_and_and 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __sync_fetch_and_or() can handle on your system */\n\
-#define ETHR_HAVE___sync_fetch_and_or 28\n\
+#define ETHR_HAVE___sync_fetch_and_or 12\n\
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __sync_synchronize() can handle on your system */\n\
@@ -305,7 +305,7 @@ const char* erts_build_flags_CONFIG_H = "/* x86_64-unknown-linux-gnu/config.h.  
 \n\
 /* Define as a bitmask corresponding to the word sizes that\n\
    __sync_val_compare_and_swap() can handle on your system */\n\
-#define ETHR_HAVE___sync_val_compare_and_swap 28\n\
+#define ETHR_HAVE___sync_val_compare_and_swap 12\n\
 \n\
 /* Define if you want to modify the default stack size */\n\
 /* #undef ETHR_MODIFIED_DEFAULT_STACK_SIZE */\n\
@@ -350,7 +350,7 @@ const char* erts_build_flags_CONFIG_H = "/* x86_64-unknown-linux-gnu/config.h.  
 #define ETHR_SIZEOF___INT128_T 16\n\
 \n\
 /* Define to the size of __int64 */\n\
-#define ETHR_SIZEOF___INT64 8\n\
+#define ETHR_SIZEOF___INT64 0\n\
 \n\
 /* Define if you want to enable check for native ethread implementations */\n\
 #define ETHR_SMP_REQUIRE_NATIVE_IMPLS 1\n\
@@ -396,7 +396,7 @@ const char* erts_build_flags_CONFIG_H = "/* x86_64-unknown-linux-gnu/config.h.  
 /* #undef HAVE_CLOSEFROM */\n\
 \n\
 /* Define if you have a decl of fread that conflicts with int fread */\n\
-/* #undef HAVE_CONFLICTING_FREAD_DECLARATION */\n\
+#define HAVE_CONFLICTING_FREAD_DECLARATION 1\n\
 \n\
 /* Define if you have a putenv() that stores a copy of the key-value pair */\n\
 /* #undef HAVE_COPYING_PUTENV */\n\
@@ -656,7 +656,7 @@ const char* erts_build_flags_CONFIG_H = "/* x86_64-unknown-linux-gnu/config.h.  
 /* #undef HAVE_IN_ADDR6_STRUCT */\n\
 \n\
 /* Define to 1 if you have the `isfinite' function. */\n\
-#define HAVE_ISFINITE 1\n\
+/* #undef HAVE_ISFINITE */\n\
 \n\
 /* Define to 1 if you have the `isinf' function. */\n\
 #define HAVE_ISINF 1\n\
@@ -1190,7 +1190,7 @@ const char* erts_build_flags_CONFIG_H = "/* x86_64-unknown-linux-gnu/config.h.  
 #define SIZEOF___INT128_T 16\n\
 \n\
 /* The size of `__int64', as computed by sizeof. */\n\
-#define SIZEOF___INT64 8\n\
+#define SIZEOF___INT64 0\n\
 \n\
 /* Define to 1 if you have the ANSI C header files. */\n\
 #define STDC_HEADERS 1\n\

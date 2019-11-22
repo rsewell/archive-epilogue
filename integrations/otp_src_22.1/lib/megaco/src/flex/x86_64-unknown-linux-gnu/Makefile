@@ -44,9 +44,9 @@ CFLAGS = $(subst -O2, , $(TMP_CFLAGS)) -DVALGRIND
 else
 CFLAGS = $(TMP_CFLAGS)
 endif
-CC      = icc
+CC      = gcc
 CFLAGS_MT = $(CFLAGS)  -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS
-LD      = icc
+LD      = gcc
 LDFLAGS = -shared -Wl,-Bsymbolic
 LEX     = :
 LEXLIB  = 

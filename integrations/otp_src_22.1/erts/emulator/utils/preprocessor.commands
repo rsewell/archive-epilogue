@@ -1,0 +1,19 @@
+make_alloc_types -src beam/erl_alloc.types -dst  x86_64-unknown-linux-gnu/opt/smp/erl_alloc_types.h threads hipe exec_alloc exec_alloc nofrag unix
+
+
+
+-wordsize, 64, -code-model, small, -outdir, x86_64-unknown-linux-gnu/opt/smp, -DUSE_VM_PROBES=0, -DUSE_VM_PROBES=0, -DNO_FPE_SIGNALS=1, -emulator, 
+/home/rsewell/Projects/Epilogue/integrations/otp_src_22.1/lib/compiler/src/genop.tab , 
+beam/ops.tab, 
+beam/macros.tab, 
+beam/instrs.tab, 
+beam/arith_instrs.tab, 
+beam/bif_instrs.tab, 
+beam/bs_instrs.tab , 
+beam/float_instrs.tab , 
+beam/map_instrs.tab , 
+beam/msg_instrs.tab , 
+beam/select_instrs.tab , 
+beam/trace_instrs.tab , 
+hipe/hipe_ops.tab , 
+hipe/hipe_instrs.tab ,  ...

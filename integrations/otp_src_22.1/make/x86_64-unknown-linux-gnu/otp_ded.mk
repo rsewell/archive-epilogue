@@ -28,9 +28,9 @@ DED_MK_VSN = 2
 # ----------------------------------------------------
 # Variables needed for building Dynamic Erlang Drivers
 # ----------------------------------------------------
-DED_CC = icc
+DED_CC = gcc
 DED_GCC = yes
-DED_LD = icc
+DED_LD = gcc
 DED_LDFLAGS = -shared -Wl,-Bsymbolic
 DED_BASIC_CFLAGS = -Werror=undef -Werror=implicit -Werror=return-type  -Wdeclaration-after-statement -Wall -Wstrict-prototypes -Wmissing-prototypes  -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS -g -O2  -D_GNU_SOURCE -fPIC
 DED_THR_DEFS =  -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS

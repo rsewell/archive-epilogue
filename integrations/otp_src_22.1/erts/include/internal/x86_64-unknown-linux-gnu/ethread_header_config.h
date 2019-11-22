@@ -32,7 +32,7 @@
 #define ETHR_SIZEOF_LONG_LONG 8
 
 /* Define to the size of __int64 */
-#define ETHR_SIZEOF___INT64 8
+#define ETHR_SIZEOF___INT64 0
 
 /* Define to the size of __int128_t */
 #define ETHR_SIZEOF___INT128_T 16
@@ -97,19 +97,19 @@
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_add_and_fetch() can handle on your system */
-#define ETHR_HAVE___sync_add_and_fetch 28
+#define ETHR_HAVE___sync_add_and_fetch 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_fetch_and_and() can handle on your system */
-#define ETHR_HAVE___sync_fetch_and_and 28
+#define ETHR_HAVE___sync_fetch_and_and 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_fetch_and_or() can handle on your system */
-#define ETHR_HAVE___sync_fetch_and_or 28
+#define ETHR_HAVE___sync_fetch_and_or 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __sync_val_compare_and_swap() can handle on your system */
-#define ETHR_HAVE___sync_val_compare_and_swap 28
+#define ETHR_HAVE___sync_val_compare_and_swap 12
 
 /* Define as a boolean indicating whether you have a gcc __atomic builtins or
    not */
@@ -121,27 +121,27 @@
 
 /* Define as a bitmask corresponding to the word sizes that __atomic_store_n()
    can handle on your system */
-#define ETHR_HAVE___atomic_store_n 28
+#define ETHR_HAVE___atomic_store_n 12
 
 /* Define as a bitmask corresponding to the word sizes that __atomic_load_n()
    can handle on your system */
-#define ETHR_HAVE___atomic_load_n 28
+#define ETHR_HAVE___atomic_load_n 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_add_fetch() can handle on your system */
-#define ETHR_HAVE___atomic_add_fetch 28
+#define ETHR_HAVE___atomic_add_fetch 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_fetch_and() can handle on your system */
-#define ETHR_HAVE___atomic_fetch_and 28
+#define ETHR_HAVE___atomic_fetch_and 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_fetch_or() can handle on your system */
-#define ETHR_HAVE___atomic_fetch_or 28
+#define ETHR_HAVE___atomic_fetch_or 12
 
 /* Define as a bitmask corresponding to the word sizes that
    __atomic_compare_exchange_n() can handle on your system */
-#define ETHR_HAVE___atomic_compare_exchange_n 28
+#define ETHR_HAVE___atomic_compare_exchange_n 12
 
 /* Define if you prefer gcc native ethread implementations */
 /* #undef ETHR_PREFER_GCC_NATIVE_IMPLS */

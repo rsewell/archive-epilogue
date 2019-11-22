@@ -39,16 +39,16 @@ $BEAM_FORMAT_NUMBER = undef;
 $GC_REGEXP = undef;
 
 my $target = \&emulator_output;
-my $outdir = ".";		# Directory for output files.
+my $outdir = ".";		                # Directory for output files.
 my $verbose = 0;
 my $hotness = 1;
 my $num_file_opcodes = 0;
 my $wordsize = 32;
-my $code_pointers_are_short = 0; # Whether code pointers (to C code) are short.
+my $code_pointers_are_short = 0;     # Whether code pointers (to C code) are short.
 my $code_model = 'unknown';
-my %defs;                        # Defines (from command line).
+my %defs;                                       # Defines (from command line).
 
-# This is shift counts and mask for the packer.
+                                                       # This is shift counts and mask for the packer.
 my $WHOLE_WORD = '';
 
 my @basic_pack_options = (0);
@@ -270,6 +270,9 @@ $match_engine_ops{'TOP_fail'} = 1;
 #
 # Parse command line options.
 #
+
+print STDOUT "THIS IS A TEST !!!!!! $ARGV[0], $ARGV[1], $ARGV[2], $ARGV[3], $ARGV[4], $ARGV[5], $ARGV[6], $ARGV[6], $ARGV[7], $ARGV[8], $ARGV[9] , $ARGV[10], $ARGV[11], $ARGV[12], $ARGV[13], $ARGV[14], $ARGV[15] , $ARGV[16] , $ARGV[17] , $ARGV[18] , $ARGV[19] , $ARGV[20] , $ARGV[21] , $ARGV[22] , $ARGV[23] ... \n";
+
 
 while (@ARGV && $ARGV[0] =~ /^-(.*)/) {
     $_ = $1;

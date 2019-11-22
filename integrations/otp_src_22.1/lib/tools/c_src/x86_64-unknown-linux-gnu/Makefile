@@ -25,7 +25,7 @@ include $(ERL_TOP)/erts/include/internal/$(TARGET)/ethread.mk
 USING_MINGW=no
 USING_VC=no
 
-CC=icc
+CC=gcc
 LD=$(CC)
 AR=ar
 RANLIB=ranlib
@@ -205,7 +205,7 @@ release_docs_spec:
 #
 
 ifeq ($(USING_VC), yes)
-DEP_CC=icc
+DEP_CC=gcc
 else
 DEP_CC=$(CC)
 endif

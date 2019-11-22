@@ -30,8 +30,8 @@ VSN=$(CRYPTO_VSN)
 # The following variables differ between systems.
 # Set by configure.
 # ----------------------------------------------------
-CC = icc
-LD = icc
+CC = gcc
+LD = gcc
 SHELL = /bin/sh
 LIBS = 
 LDFLAGS += -shared -Wl,-Bsymbolic

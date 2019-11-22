@@ -77,10 +77,10 @@ INSTALL_SCRIPT  = ${INSTALL}
 INSTALL_DATA    = ${INSTALL} -m 644
 INSTALL_DIR_DATA = $(ERL_TOP)/make/install_dir_data.sh
 
-CC = icc
+CC = gcc
 GCC = yes
 HCC = $(CC)
-CC32 = icc
+CC32 = gcc
 CFLAGS32 = -g -O2 -I/home/rsewell/Projects/Epilogue/integrations/otp_src_22.1/erts/x86_64-unknown-linux-gnu   -fno-tree-copyrename  -D_GNU_SOURCE -m32
 BASIC_CFLAGS = -Werror=undef -Werror=implicit -Werror=return-type  -g -O2 -I/home/rsewell/Projects/Epilogue/integrations/otp_src_22.1/erts/x86_64-unknown-linux-gnu   -fno-tree-copyrename  -D_GNU_SOURCE
 DEBUG_FLAGS =  -g

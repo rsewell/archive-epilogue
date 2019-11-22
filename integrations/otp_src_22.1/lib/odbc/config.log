@@ -44,56 +44,66 @@ configure:2497: result: x86_64-unknown-linux-gnu
 configure:2517: checking host system type
 configure:2530: result: x86_64-unknown-linux-gnu
 configure:2626: checking for gcc
-configure:2653: result: icc
+configure:2642: found /usr/bin/gcc
+configure:2653: result: gcc
 configure:2882: checking for C compiler version
-configure:2891: icc --version >&5
-icc (ICC) 19.0.5.281 20190815
-Copyright (C) 1985-2019 Intel Corporation.  All rights reserved.
+configure:2891: gcc --version >&5
+gcc (SUSE Linux) 7.3.1 20180323 [gcc-7-branch revision 258812]
+Copyright (C) 2017 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 configure:2902: $? = 0
-configure:2891: icc -v >&5
-icc version 19.0.5.281 (gcc version 7.3.1 compatibility)
+configure:2891: gcc -v >&5
+Using built-in specs.
+COLLECT_GCC=gcc
+COLLECT_LTO_WRAPPER=/usr/lib64/gcc/x86_64-suse-linux/7/lto-wrapper
+OFFLOAD_TARGET_NAMES=hsa:nvptx-none
+Target: x86_64-suse-linux
+Configured with: ../configure --prefix=/usr --infodir=/usr/share/info --mandir=/usr/share/man --libdir=/usr/lib64 --libexecdir=/usr/lib64 --enable-languages=c,c++,objc,fortran,obj-c++,ada,go --enable-offload-targets=hsa,nvptx-none=/usr/nvptx-none, --without-cuda-driver --enable-checking=release --disable-werror --with-gxx-include-dir=/usr/include/c++/7 --enable-ssp --disable-libssp --disable-libvtv --disable-libcc1 --disable-plugin --with-bugurl=http://bugs.opensuse.org/ --with-pkgversion='SUSE Linux' --with-slibdir=/lib64 --with-system-zlib --enable-__cxa_atexit --enable-libstdcxx-allocator=new --disable-libstdcxx-pch --enable-version-specific-runtime-libs --with-gcc-major-version-only --enable-linker-build-id --enable-linux-futex --enable-gnu-indirect-function --program-suffix=-7 --without-system-libunwind --enable-multilib --with-arch-32=x86-64 --with-tune=generic --build=x86_64-suse-linux --host=x86_64-suse-linux
+Thread model: posix
+gcc version 7.3.1 20180323 [gcc-7-branch revision 258812] (SUSE Linux) 
 configure:2902: $? = 0
-configure:2891: icc -V >&5
-Intel(R) C Intel(R) 64 Compiler for applications running on Intel(R) 64, Version 19.0.5.281 Build 20190815
-Copyright (C) 1985-2019 Intel Corporation.  All rights reserved.
-FOR NON-COMMERCIAL USE ONLY
-
-configure:2902: $? = 0
-configure:2891: icc -qversion >&5
-icc: command line warning #10006: ignoring unknown option '-qversion'
-icc: command line error: no files specified; for help type "icc -help"
+configure:2891: gcc -V >&5
+gcc: error: unrecognized command line option '-V'
+gcc: fatal error: no input files
+compilation terminated.
+configure:2902: $? = 1
+configure:2891: gcc -qversion >&5
+gcc: error: unrecognized command line option '-qversion'; did you mean '--version'?
+gcc: fatal error: no input files
+compilation terminated.
 configure:2902: $? = 1
 configure:2922: checking whether the C compiler works
-configure:2944: icc    conftest.c  >&5
+configure:2944: gcc    conftest.c  >&5
 configure:2948: $? = 0
 configure:2996: result: yes
 configure:2999: checking for C compiler default output file name
 configure:3001: result: a.out
 configure:3007: checking for suffix of executables
-configure:3014: icc -o conftest    conftest.c  >&5
+configure:3014: gcc -o conftest    conftest.c  >&5
 configure:3018: $? = 0
 configure:3040: result: 
 configure:3062: checking whether we are cross compiling
-configure:3070: icc -o conftest    conftest.c  >&5
+configure:3070: gcc -o conftest    conftest.c  >&5
 configure:3074: $? = 0
 configure:3081: ./conftest
 configure:3085: $? = 0
 configure:3100: result: no
 configure:3105: checking for suffix of object files
-configure:3127: icc -c   conftest.c >&5
+configure:3127: gcc -c   conftest.c >&5
 configure:3131: $? = 0
 configure:3152: result: o
 configure:3156: checking whether we are using the GNU C compiler
-configure:3175: icc -c   conftest.c >&5
+configure:3175: gcc -c   conftest.c >&5
 configure:3175: $? = 0
 configure:3184: result: yes
-configure:3193: checking whether icc accepts -g
-configure:3213: icc -c -g  conftest.c >&5
+configure:3193: checking whether gcc accepts -g
+configure:3213: gcc -c -g  conftest.c >&5
 configure:3213: $? = 0
 configure:3254: result: yes
-configure:3271: checking for icc option to accept ISO C89
-configure:3334: icc  -c -g -O2  conftest.c >&5
+configure:3271: checking for gcc option to accept ISO C89
+configure:3334: gcc  -c -g -O2  conftest.c >&5
 configure:3334: $? = 0
 configure:3347: result: none needed
 configure:3375: checking for mixed cygwin or msys and native VC++ environment
@@ -115,22 +125,22 @@ configure:3639: checking for rm
 configure:3657: found /bin/rm
 configure:3670: result: /bin/rm
 configure:3705: checking for connect
-configure:3705: icc -o conftest -g -O2   conftest.c  >&5
+configure:3705: gcc -o conftest -g -O2   conftest.c  >&5
 configure:3705: $? = 0
 configure:3705: result: yes
 configure:3767: checking for gethostbyname
-configure:3767: icc -o conftest -g -O2   conftest.c  >&5
+configure:3767: gcc -o conftest -g -O2   conftest.c  >&5
 configure:3767: $? = 0
 configure:3767: result: yes
 configure:3813: checking how to run the C preprocessor
-configure:3844: icc -E  conftest.c
+configure:3844: gcc -E  conftest.c
 configure:3844: $? = 0
-configure:3858: icc -E  conftest.c
-conftest.c(9): error #2379: cannot open source file "ac_nonexistent.h"
-  #include <ac_nonexistent.h>
-                             ^
-
-configure:3858: $? = 2
+configure:3858: gcc -E  conftest.c
+conftest.c:9:10: fatal error: ac_nonexistent.h: No such file or directory
+ #include <ac_nonexistent.h>
+          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+configure:3858: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -141,15 +151,15 @@ configure: failed program was:
 | #define PACKAGE_URL ""
 | /* end confdefs.h.  */
 | #include <ac_nonexistent.h>
-configure:3883: result: icc -E
-configure:3903: icc -E  conftest.c
+configure:3883: result: gcc -E
+configure:3903: gcc -E  conftest.c
 configure:3903: $? = 0
-configure:3917: icc -E  conftest.c
-conftest.c(9): error #2379: cannot open source file "ac_nonexistent.h"
-  #include <ac_nonexistent.h>
-                             ^
-
-configure:3917: $? = 2
+configure:3917: gcc -E  conftest.c
+conftest.c:9:10: fatal error: ac_nonexistent.h: No such file or directory
+ #include <ac_nonexistent.h>
+          ^~~~~~~~~~~~~~~~~~
+compilation terminated.
+configure:3917: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -165,65 +175,65 @@ configure:4004: result: /usr/bin/grep
 configure:4009: checking for egrep
 configure:4071: result: /usr/bin/grep -E
 configure:4076: checking for ANSI C header files
-configure:4096: icc -c -g -O2  conftest.c >&5
+configure:4096: gcc -c -g -O2  conftest.c >&5
 configure:4096: $? = 0
-configure:4169: icc -o conftest -g -O2   conftest.c  >&5
+configure:4169: gcc -o conftest -g -O2   conftest.c  >&5
 configure:4169: $? = 0
 configure:4169: ./conftest
 configure:4169: $? = 0
 configure:4180: result: yes
 configure:4193: checking for sys/types.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for sys/stat.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for stdlib.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for string.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for memory.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for strings.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for inttypes.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for stdint.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4193: checking for unistd.h
-configure:4193: icc -c -g -O2  conftest.c >&5
+configure:4193: gcc -c -g -O2  conftest.c >&5
 configure:4193: $? = 0
 configure:4193: result: yes
 configure:4208: checking fcntl.h usability
-configure:4208: icc -c -g -O2  conftest.c >&5
+configure:4208: gcc -c -g -O2  conftest.c >&5
 configure:4208: $? = 0
 configure:4208: result: yes
 configure:4208: checking fcntl.h presence
-configure:4208: icc -E  conftest.c
+configure:4208: gcc -E  conftest.c
 configure:4208: $? = 0
 configure:4208: result: yes
 configure:4208: checking for fcntl.h
 configure:4208: result: yes
 configure:4208: checking netdb.h usability
-configure:4208: icc -c -g -O2  conftest.c >&5
+configure:4208: gcc -c -g -O2  conftest.c >&5
 configure:4208: $? = 0
 configure:4208: result: yes
 configure:4208: checking netdb.h presence
-configure:4208: icc -E  conftest.c
+configure:4208: gcc -E  conftest.c
 configure:4208: $? = 0
 configure:4208: result: yes
 configure:4208: checking for netdb.h
@@ -233,23 +243,22 @@ configure:4208: result: yes
 configure:4208: checking for string.h
 configure:4208: result: yes
 configure:4208: checking sys/socket.h usability
-configure:4208: icc -c -g -O2  conftest.c >&5
+configure:4208: gcc -c -g -O2  conftest.c >&5
 configure:4208: $? = 0
 configure:4208: result: yes
 configure:4208: checking sys/socket.h presence
-configure:4208: icc -E  conftest.c
+configure:4208: gcc -E  conftest.c
 configure:4208: $? = 0
 configure:4208: result: yes
 configure:4208: checking for sys/socket.h
 configure:4208: result: yes
 configure:4208: checking winsock2.h usability
-configure:4208: icc -c -g -O2  conftest.c >&5
-conftest.c(57): catastrophic error: cannot open source file "winsock2.h"
-  #include <winsock2.h>
-                       ^
-
-compilation aborted for conftest.c (code 4)
-configure:4208: $? = 4
+configure:4208: gcc -c -g -O2  conftest.c >&5
+conftest.c:57:10: fatal error: winsock2.h: No such file or directory
+ #include <winsock2.h>
+          ^~~~~~~~~~~~
+compilation terminated.
+configure:4208: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -310,12 +319,12 @@ configure: failed program was:
 | #include <winsock2.h>
 configure:4208: result: no
 configure:4208: checking winsock2.h presence
-configure:4208: icc -E  conftest.c
-conftest.c(24): error #2379: cannot open source file "winsock2.h"
-  #include <winsock2.h>
-                       ^
-
-configure:4208: $? = 2
+configure:4208: gcc -E  conftest.c
+conftest.c:24:10: fatal error: winsock2.h: No such file or directory
+ #include <winsock2.h>
+          ^~~~~~~~~~~~
+compilation terminated.
+configure:4208: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -345,13 +354,12 @@ configure:4208: result: no
 configure:4208: checking for winsock2.h
 configure:4208: result: no
 configure:4220: checking windows.h usability
-configure:4220: icc -c -g -O2  conftest.c >&5
-conftest.c(57): catastrophic error: cannot open source file "windows.h"
-  #include <windows.h>
-                      ^
-
-compilation aborted for conftest.c (code 4)
-configure:4220: $? = 4
+configure:4220: gcc -c -g -O2  conftest.c >&5
+conftest.c:57:10: fatal error: windows.h: No such file or directory
+ #include <windows.h>
+          ^~~~~~~~~~~
+compilation terminated.
+configure:4220: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -412,12 +420,12 @@ configure: failed program was:
 | #include <windows.h>
 configure:4220: result: no
 configure:4220: checking windows.h presence
-configure:4220: icc -E  conftest.c
-conftest.c(24): error #2379: cannot open source file "windows.h"
-  #include <windows.h>
-                      ^
-
-configure:4220: $? = 2
+configure:4220: gcc -E  conftest.c
+conftest.c:24:10: fatal error: windows.h: No such file or directory
+ #include <windows.h>
+          ^~~~~~~~~~~
+compilation terminated.
+configure:4220: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -447,27 +455,26 @@ configure:4220: result: no
 configure:4220: checking for windows.h
 configure:4220: result: no
 configure:4233: checking for sql.h
-configure:4233: icc -c -g -O2  conftest.c >&5
+configure:4233: gcc -c -g -O2  conftest.c >&5
 configure:4233: $? = 0
 configure:4233: result: yes
 configure:4233: checking for sqlext.h
-configure:4233: icc -c -g -O2  conftest.c >&5
+configure:4233: gcc -c -g -O2  conftest.c >&5
 configure:4233: $? = 0
 configure:4233: result: yes
 configure:4250: checking for an ANSI C-conforming const
-configure:4316: icc -c -g -O2  conftest.c >&5
+configure:4316: gcc -c -g -O2  conftest.c >&5
 configure:4316: $? = 0
 configure:4323: result: yes
 configure:4331: checking for size_t
-configure:4331: icc -c -g -O2  conftest.c >&5
+configure:4331: gcc -c -g -O2  conftest.c >&5
 configure:4331: $? = 0
-configure:4331: icc -c -g -O2  conftest.c >&5
-conftest.c(62): error: expected an expression
-  if (sizeof ((size_t)))
-                      ^
-
-compilation aborted for conftest.c (code 2)
-configure:4331: $? = 2
+configure:4331: gcc -c -g -O2  conftest.c >&5
+conftest.c: In function 'main':
+conftest.c:62:21: error: expected expression before ')' token
+ if (sizeof ((size_t)))
+                     ^
+configure:4331: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -537,13 +544,12 @@ configure: failed program was:
 | }
 configure:4331: result: yes
 configure:4342: checking for struct sockaddr_in6.sin6_addr
-configure:4342: icc -c -g -O2  conftest.c >&5
-conftest.c(37): error: expression must have arithmetic or pointer type
-  if (ac_aggr.sin6_addr)
-      ^
-
-compilation aborted for conftest.c (code 2)
-configure:4342: $? = 2
+configure:4342: gcc -c -g -O2  conftest.c >&5
+conftest.c: In function 'main':
+conftest.c:37:5: error: used struct type value where scalar is required
+ if (ac_aggr.sin6_addr)
+     ^~~~~~~
+configure:4342: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -586,21 +592,24 @@ configure: failed program was:
 |   ;
 |   return 0;
 | }
-configure:4342: icc -c -g -O2  conftest.c >&5
+configure:4342: gcc -c -g -O2  conftest.c >&5
 configure:4342: $? = 0
 configure:4342: result: yes
 configure:4362: checking for memset
-configure:4362: icc -o conftest -g -O2   conftest.c  >&5
+configure:4362: gcc -o conftest -g -O2   conftest.c  >&5
+conftest.c:50:6: warning: conflicting types for built-in function 'memset' [-Wbuiltin-declaration-mismatch]
+ char memset ();
+      ^~~~~~
 configure:4362: $? = 0
 configure:4362: result: yes
 configure:4362: checking for socket
-configure:4362: icc -o conftest -g -O2   conftest.c  >&5
+configure:4362: gcc -o conftest -g -O2   conftest.c  >&5
 configure:4362: $? = 0
 configure:4362: result: yes
 configure:4379: checking for native win32 threads
 configure:4389: result: no
 configure:4397: checking for pthread_create in -lpthread
-configure:4422: icc -o conftest -g -O2   conftest.c -lpthread   >&5
+configure:4422: gcc -o conftest -g -O2   conftest.c -lpthread   >&5
 configure:4422: $? = 0
 configure:4431: result: yes
 configure:4537: checking for getconf
@@ -609,13 +618,12 @@ configure:4565: result: getconf
 configure:4719: checking for Native POSIX Thread Library
 configure:4736: result: yes
 configure:4746: checking nptl/pthread.h usability
-configure:4746: icc -c -g -O2  conftest.c >&5
-conftest.c(62): catastrophic error: cannot open source file "nptl/pthread.h"
-  #include <nptl/pthread.h>
-                           ^
-
-compilation aborted for conftest.c (code 4)
-configure:4746: $? = 4
+configure:4746: gcc -c -g -O2  conftest.c >&5
+conftest.c:62:10: fatal error: nptl/pthread.h: No such file or directory
+ #include <nptl/pthread.h>
+          ^~~~~~~~~~~~~~~~
+compilation terminated.
+configure:4746: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -681,12 +689,12 @@ configure: failed program was:
 | #include <nptl/pthread.h>
 configure:4746: result: no
 configure:4746: checking nptl/pthread.h presence
-configure:4746: icc -E  conftest.c
-conftest.c(29): error #2379: cannot open source file "nptl/pthread.h"
-  #include <nptl/pthread.h>
-                           ^
-
-configure:4746: $? = 2
+configure:4746: gcc -E  conftest.c
+conftest.c:29:10: fatal error: nptl/pthread.h: No such file or directory
+ #include <nptl/pthread.h>
+          ^~~~~~~~~~~~~~~~
+compilation terminated.
+configure:4746: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -721,23 +729,22 @@ configure:4746: result: no
 configure:4746: checking for nptl/pthread.h
 configure:4746: result: no
 configure:4799: checking pthread.h usability
-configure:4799: icc -c -g -O2   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c >&5
+configure:4799: gcc -c -g -O2   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c >&5
 configure:4799: $? = 0
 configure:4799: result: yes
 configure:4799: checking pthread.h presence
-configure:4799: icc -E   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c
+configure:4799: gcc -E   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c
 configure:4799: $? = 0
 configure:4799: result: yes
 configure:4799: checking for pthread.h
 configure:4799: result: yes
 configure:4808: checking pthread/mit/pthread.h usability
-configure:4808: icc -c -g -O2   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c >&5
-conftest.c(63): catastrophic error: cannot open source file "pthread/mit/pthread.h"
-  #include <pthread/mit/pthread.h>
-                                  ^
-
-compilation aborted for conftest.c (code 4)
-configure:4808: $? = 4
+configure:4808: gcc -c -g -O2   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c >&5
+conftest.c:63:10: fatal error: pthread/mit/pthread.h: No such file or directory
+ #include <pthread/mit/pthread.h>
+          ^~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+configure:4808: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -804,12 +811,12 @@ configure: failed program was:
 | #include <pthread/mit/pthread.h>
 configure:4808: result: no
 configure:4808: checking pthread/mit/pthread.h presence
-configure:4808: icc -E   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c
-conftest.c(30): error #2379: cannot open source file "pthread/mit/pthread.h"
-  #include <pthread/mit/pthread.h>
-                                  ^
-
-configure:4808: $? = 2
+configure:4808: gcc -E   -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS conftest.c
+conftest.c:30:10: fatal error: pthread/mit/pthread.h: No such file or directory
+ #include <pthread/mit/pthread.h>
+          ^~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+configure:4808: $? = 1
 configure: failed program was:
 | /* confdefs.h */
 | #define PACKAGE_NAME ""
@@ -845,7 +852,7 @@ configure:4808: result: no
 configure:4808: checking for pthread/mit/pthread.h
 configure:4808: result: no
 configure:4979: checking size of void *
-configure:4984: icc -o conftest -g -O2   conftest.c  >&5
+configure:4984: gcc -o conftest -g -O2   conftest.c  >&5
 configure:4984: $? = 0
 configure:4984: ./conftest
 configure:4984: $? = 0
@@ -853,11 +860,11 @@ configure:4998: result: 8
 configure:5008: checking for odbc in standard locations
 configure:5034: result: -L/usr/lib64
 configure:5036: checking for SQLAllocHandle in -lodbc
-configure:5061: icc -o conftest -g -O2   conftest.c -lodbc   >&5
+configure:5061: gcc -o conftest -g -O2   conftest.c -lodbc   >&5
 configure:5061: $? = 0
 configure:5070: result: yes
 configure:5145: checking if we can add -Werror=return-type to CFLAGS (via CFLAGS)
-configure:5160: icc -c -Werror=return-type -g -O2  conftest.c >&5
+configure:5160: gcc -c -Werror=return-type -g -O2  conftest.c >&5
 configure:5160: $? = 0
 configure:5168: result: yes
 configure:5346: creating ./config.status
@@ -886,8 +893,8 @@ config.status:747: creating c_src/x86_64-unknown-linux-gnu/Makefile
 ac_cv_build=x86_64-unknown-linux-gnu
 ac_cv_c_compiler_gnu=yes
 ac_cv_c_const=yes
-ac_cv_env_CC_set=set
-ac_cv_env_CC_value=icc
+ac_cv_env_CC_set=
+ac_cv_env_CC_value=
 ac_cv_env_CFLAGS_set=
 ac_cv_env_CFLAGS_value=
 ac_cv_env_CPPFLAGS_set=
@@ -936,9 +943,9 @@ ac_cv_objext=o
 ac_cv_path_EGREP='/usr/bin/grep -E'
 ac_cv_path_GREP=/usr/bin/grep
 ac_cv_path_RM=/bin/rm
-ac_cv_prog_CPP='icc -E'
+ac_cv_prog_CPP='gcc -E'
 ac_cv_prog_GETCONF=getconf
-ac_cv_prog_ac_ct_CC=icc
+ac_cv_prog_ac_ct_CC=gcc
 ac_cv_prog_ac_ct_LD=ld
 ac_cv_prog_cc_c89=
 ac_cv_prog_cc_g=yes
@@ -950,9 +957,9 @@ ac_cv_type_size_t=yes
 ## Output variables. ##
 ## ----------------- ##
 
-CC='icc'
+CC='gcc'
 CFLAGS='-Werror=return-type -g -O2'
-CPP='icc -E'
+CPP='gcc -E'
 CPPFLAGS=''
 DEFS='-DPACKAGE_NAME=\"\" -DPACKAGE_TARNAME=\"\" -DPACKAGE_VERSION=\"\" -DPACKAGE_STRING=\"\" -DPACKAGE_BUGREPORT=\"\" -DPACKAGE_URL=\"\" -DSTDC_HEADERS=1 -DHAVE_SYS_TYPES_H=1 -DHAVE_SYS_STAT_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_MEMORY_H=1 -DHAVE_STRINGS_H=1 -DHAVE_INTTYPES_H=1 -DHAVE_STDINT_H=1 -DHAVE_UNISTD_H=1 -DHAVE_FCNTL_H=1 -DHAVE_NETDB_H=1 -DHAVE_STDLIB_H=1 -DHAVE_STRING_H=1 -DHAVE_SYS_SOCKET_H=1 -DHAVE_SQL_H=1 -DHAVE_SQLEXT_H=1 -DHAVE_STRUCT_SOCKADDR_IN6_SIN6_ADDR=1 -DHAVE_MEMSET=1 -DHAVE_SOCKET=1 -DHAVE_PTHREAD_H=1 -DSIZEOF_VOID_P=8'
 ECHO_C=''
@@ -989,7 +996,7 @@ SHELL='/bin/sh'
 TARGET_FLAGS='-DUNIX'
 THR_DEFS=' -D_THREAD_SAFE -D_REENTRANT -DPOSIX_THREADS -D_POSIX_THREAD_SAFE_FUNCTIONS'
 THR_LIBS='-lpthread'
-ac_ct_CC='icc'
+ac_ct_CC='gcc'
 bindir='${exec_prefix}/bin'
 build='x86_64-unknown-linux-gnu'
 build_alias=''
